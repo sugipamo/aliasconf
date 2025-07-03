@@ -30,8 +30,8 @@ class TestMultiFileIntegration:
                         "aliases": ["db"],
                         "host": "localhost",
                         "port": 5432,
-                        "name": "myapp"
-                    }
+                        "name": "myapp",
+                    },
                 }
             }
 
@@ -39,10 +39,7 @@ class TestMultiFileIntegration:
             dev_config = {
                 "app": {
                     "debug": True,
-                    "database": {
-                        "host": "dev.db.local",
-                        "name": "myapp_dev"
-                    }
+                    "database": {"host": "dev.db.local", "name": "myapp_dev"},
                 }
             }
 
@@ -52,7 +49,7 @@ class TestMultiFileIntegration:
                     "database": {
                         "host": "prod.db.example.com",
                         "port": 5433,
-                        "ssl": True
+                        "ssl": True,
                     }
                 }
             }
@@ -96,8 +93,8 @@ class TestMultiFileIntegration:
                     "features": {
                         "aliases": ["feat", "capabilities"],
                         "auth": True,
-                        "api": True
-                    }
+                        "api": True,
+                    },
                 }
             }
 
@@ -107,13 +104,13 @@ class TestMultiFileIntegration:
                     "primary": {
                         "aliases": ["main_db", "primary_db"],
                         "host": "db1.example.com",
-                        "pool_size": 10
+                        "pool_size": 10,
                     },
                     "replica": {
                         "aliases": ["read_db", "replica_db"],
                         "host": "db2.example.com",
-                        "pool_size": 5
-                    }
+                        "pool_size": 5,
+                    },
                 }
             }
 
@@ -123,13 +120,13 @@ class TestMultiFileIntegration:
                     "auth": {
                         "aliases": ["authentication", "auth_service"],
                         "url": "https://auth.example.com",
-                        "timeout": 30
+                        "timeout": 30,
                     },
                     "api": {
                         "aliases": ["backend", "api_service"],
                         "url": "https://api.example.com",
-                        "timeout": 60
-                    }
+                        "timeout": 60,
+                    },
                 }
             }
 
@@ -152,10 +149,17 @@ class TestMultiFileIntegration:
             assert config.get("app.name", str) == "ModularApp"
             assert config.get("app.feat.auth", bool) is True  # Via alias
 
-            assert config.get("database.main_db.host", str) == "db1.example.com"  # Via alias
-            assert config.get("database.read_db.host", str) == "db2.example.com"  # Via alias
+            assert (
+                config.get("database.main_db.host", str) == "db1.example.com"
+            )  # Via alias
+            assert (
+                config.get("database.read_db.host", str) == "db2.example.com"
+            )  # Via alias
 
-            assert config.get("services.authentication.url", str) == "https://auth.example.com"  # Via alias
+            assert (
+                config.get("services.authentication.url", str)
+                == "https://auth.example.com"
+            )  # Via alias
             assert config.get("services.backend.timeout", int) == 60  # Via alias
 
     def test_config_includes_pattern(self):
@@ -167,7 +171,7 @@ class TestMultiFileIntegration:
                     "aliases": ["shared", "defaults"],
                     "timeout": 30,
                     "retries": 3,
-                    "log_level": "INFO"
+                    "log_level": "INFO",
                 }
             }
 
@@ -176,7 +180,7 @@ class TestMultiFileIntegration:
                 "service_a": {
                     "name": "Service A",
                     "common_ref": "{common.timeout}",  # Reference to common
-                    "endpoint": "https://a.example.com"
+                    "endpoint": "https://a.example.com",
                 }
             }
 
@@ -186,7 +190,7 @@ class TestMultiFileIntegration:
                     "name": "Service B",
                     "timeout": "{shared.timeout}",  # Reference via alias
                     "retries": "{defaults.retries}",  # Reference via another alias
-                    "endpoint": "https://b.example.com"
+                    "endpoint": "https://b.example.com",
                 }
             }
 
@@ -203,13 +207,15 @@ class TestMultiFileIntegration:
                 yaml.dump(service_b_config, f)
 
             # Load all configurations
-            config = ConfigManager.from_files(common_path, service_a_path, service_b_path)
+            config = ConfigManager.from_files(
+                common_path, service_a_path, service_b_path
+            )
 
             # Test that references work
             {
                 "common": config._root.next_nodes[0],  # Assuming structure
                 "shared": config._root.next_nodes[0],
-                "defaults": config._root.next_nodes[0]
+                "defaults": config._root.next_nodes[0],
             }
 
             # Note: Real template resolution would need proper context setup
@@ -236,9 +242,7 @@ class TestEnvironmentIntegration:
                     "aliases": ["db"],
                     "host": "${TEST_DB_HOST}",
                     "port": "${TEST_DB_PORT}",
-                    "credentials": {
-                        "api_key": "${TEST_API_KEY}"
-                    }
+                    "credentials": {"api_key": "${TEST_API_KEY}"},
                 }
             }
 
@@ -262,7 +266,7 @@ class TestEnvironmentIntegration:
                 "aliases": ["application"],
                 "name": "${APP_NAME:MyDefaultApp}",
                 "port": "${APP_PORT:8080}",
-                "debug": "${APP_DEBUG:false}"
+                "debug": "${APP_DEBUG:false}",
             }
         }
 
@@ -294,7 +298,7 @@ class TestMigrationScenarios:
             "app_name": "LegacyApp",
             "app_debug": True,
             "api_timeout": 30,
-            "api_retries": 3
+            "api_retries": 3,
         }
 
         # New format (hierarchical with aliases)
@@ -303,18 +307,18 @@ class TestMigrationScenarios:
                 "aliases": ["db", "db_config"],
                 "host": "{db_host}",
                 "port": "{db_port}",
-                "name": "{db_name}"
+                "name": "{db_name}",
             },
             "application": {
                 "aliases": ["app"],
                 "name": "{app_name}",
-                "debug": "{app_debug}"
+                "debug": "{app_debug}",
             },
             "api": {
                 "aliases": ["api_config"],
                 "timeout": "{api_timeout}",
-                "retries": "{api_retries}"
-            }
+                "retries": "{api_retries}",
+            },
         }
 
         # Combine legacy and new format
@@ -335,14 +339,8 @@ class TestMigrationScenarios:
         with tempfile.TemporaryDirectory():
             # Phase 1: Original configuration
             phase1_config = {
-                "python_service": {
-                    "timeout": 30,
-                    "workers": 4
-                },
-                "javascript_service": {
-                    "timeout": 60,
-                    "workers": 2
-                }
+                "python_service": {"timeout": 30, "workers": 4},
+                "javascript_service": {"timeout": 60, "workers": 2},
             }
 
             # Phase 2: Add some aliases
@@ -350,13 +348,13 @@ class TestMigrationScenarios:
                 "python_service": {
                     "aliases": ["py_service"],
                     "timeout": 30,
-                    "workers": 4
+                    "workers": 4,
                 },
                 "javascript_service": {
                     "aliases": ["js_service"],
                     "timeout": 60,
-                    "workers": 2
-                }
+                    "workers": 2,
+                },
             }
 
             # Phase 3: Add more aliases and reorganize
@@ -365,13 +363,13 @@ class TestMigrationScenarios:
                     "python": {
                         "aliases": ["py", "python_service", "py_service"],
                         "timeout": 30,
-                        "workers": 4
+                        "workers": 4,
                     },
                     "javascript": {
                         "aliases": ["js", "javascript_service", "js_service"],
                         "timeout": 60,
-                        "workers": 2
-                    }
+                        "workers": 2,
+                    },
                 }
             }
 
@@ -386,7 +384,9 @@ class TestMigrationScenarios:
             config3 = ConfigManager.from_dict(phase3_config)
             assert config3.get("services.python.timeout", int) == 30
             assert config3.get("services.py.timeout", int) == 30  # Short alias
-            assert config3.get("services.python_service.timeout", int) == 30  # Legacy name as alias
+            assert (
+                config3.get("services.python_service.timeout", int) == 30
+            )  # Legacy name as alias
 
 
 class TestRealWorldUseCases:
@@ -403,8 +403,8 @@ class TestRealWorldUseCases:
                     "endpoints": {
                         "login": "/api/v1/login",
                         "logout": "/api/v1/logout",
-                        "verify": "/api/v1/verify"
-                    }
+                        "verify": "/api/v1/verify",
+                    },
                 },
                 "user": {
                     "aliases": ["user_service", "users"],
@@ -413,8 +413,8 @@ class TestRealWorldUseCases:
                     "database": {
                         "aliases": ["user_db"],
                         "name": "users",
-                        "pool_size": 20
-                    }
+                        "pool_size": 20,
+                    },
                 },
                 "product": {
                     "aliases": ["product_service", "products", "catalog"],
@@ -423,23 +423,23 @@ class TestRealWorldUseCases:
                     "cache": {
                         "aliases": ["product_cache"],
                         "ttl": 3600,
-                        "max_size": 1000
-                    }
-                }
+                        "max_size": 1000,
+                    },
+                },
             },
             "shared": {
                 "aliases": ["common"],
                 "redis": {
                     "aliases": ["cache", "session_store"],
                     "host": "redis.internal",
-                    "port": 6379
+                    "port": 6379,
                 },
                 "rabbitmq": {
                     "aliases": ["mq", "message_queue"],
                     "host": "rabbitmq.internal",
-                    "port": 5672
-                }
-            }
+                    "port": 5672,
+                },
+            },
         }
 
         config = ConfigManager.from_dict(config_dict)
@@ -460,64 +460,35 @@ class TestRealWorldUseCases:
     def test_multi_environment_deployment(self):
         """Test configuration for multi-environment deployment."""
         base_config = {
-            "app": {
-                "name": "MultiEnvApp",
-                "version": "1.0.0"
-            },
+            "app": {"name": "MultiEnvApp", "version": "1.0.0"},
             "features": {
                 "aliases": ["feature_flags", "flags"],
                 "new_ui": False,
                 "beta_features": False,
-                "analytics": True
-            }
+                "analytics": True,
+            },
         }
 
         env_configs = {
             "dev": {
-                "app": {
-                    "aliases": ["application"],
-                    "env": "development"
-                },
-                "features": {
-                    "new_ui": True,
-                    "beta_features": True
-                },
-                "logging": {
-                    "aliases": ["logs"],
-                    "level": "DEBUG",
-                    "output": "console"
-                }
+                "app": {"aliases": ["application"], "env": "development"},
+                "features": {"new_ui": True, "beta_features": True},
+                "logging": {"aliases": ["logs"], "level": "DEBUG", "output": "console"},
             },
             "staging": {
-                "app": {
-                    "aliases": ["application"],
-                    "env": "staging"
-                },
-                "features": {
-                    "new_ui": True,
-                    "beta_features": False
-                },
-                "logging": {
-                    "aliases": ["logs"],
-                    "level": "INFO",
-                    "output": "file"
-                }
+                "app": {"aliases": ["application"], "env": "staging"},
+                "features": {"new_ui": True, "beta_features": False},
+                "logging": {"aliases": ["logs"], "level": "INFO", "output": "file"},
             },
             "prod": {
-                "app": {
-                    "aliases": ["application"],
-                    "env": "production"
-                },
-                "features": {
-                    "new_ui": False,
-                    "beta_features": False
-                },
+                "app": {"aliases": ["application"], "env": "production"},
+                "features": {"new_ui": False, "beta_features": False},
                 "logging": {
                     "aliases": ["logs"],
                     "level": "WARNING",
-                    "output": "centralized"
-                }
-            }
+                    "output": "centralized",
+                },
+            },
         }
 
         # Test each environment
@@ -535,7 +506,9 @@ class TestRealWorldUseCases:
 
             # Common assertions
             assert config.get("app.name", str) == "MultiEnvApp"
-            assert config.get("application.env", str) == env_config["app"]["env"]  # Via alias
+            assert (
+                config.get("application.env", str) == env_config["app"]["env"]
+            )  # Via alias
 
             # Environment-specific assertions
             if env_name == "dev":
@@ -559,10 +532,7 @@ class TestConcurrentAccess:
         config_dict = {
             f"service_{i}": {
                 "aliases": [f"svc_{i}"],
-                "data": {
-                    "value": i,
-                    "name": f"Service {i}"
-                }
+                "data": {"value": i, "name": f"Service {i}"},
             }
             for i in range(100)
         }

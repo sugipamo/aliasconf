@@ -53,4 +53,3 @@ class ConfigValidationError(AliasConfError):
     """
 
     pass
-

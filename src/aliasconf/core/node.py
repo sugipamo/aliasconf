@@ -80,7 +80,7 @@ class ConfigNode:
         """
         add_edge(self, to_node)
 
-    def next_nodes_with_key(self, key: str) -> List['ConfigNode']:
+    def next_nodes_with_key(self, key: str) -> List["ConfigNode"]:
         """Get child nodes that match the given key.
 
         Args:
@@ -99,7 +99,7 @@ class ConfigNode:
         """
         return path(self)
 
-    def find_nearest_key_node(self, key: str) -> Optional['ConfigNode']:
+    def find_nearest_key_node(self, key: str) -> Optional["ConfigNode"]:
         """Find the nearest node that matches the given key using BFS.
 
         Args:

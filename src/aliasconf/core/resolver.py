@@ -60,7 +60,7 @@ def _resolve_dotted_path(root: ConfigNode, parts: List[str]) -> Optional[Any]:
     # Try to resolve from root
     from ..utils.helpers import normalize_path
 
-    normalized = normalize_path('.'.join(parts))
+    normalized = normalize_path(".".join(parts))
     node = resolve_best(root, normalized)
     if node:
         value = node.value
@@ -105,7 +105,7 @@ def create_config_root_from_dict(data: Any) -> ConfigNode:
     if not isinstance(data, dict):
         raise ConfigResolverError("Only dictionary data is supported")
 
-    root = ConfigNode('root', data)
+    root = ConfigNode("root", data)
     init_matches(root, data)
     queue = [(root, data)]
 
@@ -248,13 +248,15 @@ def resolve_formatted_string(
     context = dict(initial_values)
 
     # Helper to collect all values from the config tree
-    def collect_values(node: ConfigNode, path_parts: Optional[List[str]] = None) -> None:
+    def collect_values(
+        node: ConfigNode, path_parts: Optional[List[str]] = None
+    ) -> None:
         if path_parts is None:
             path_parts = []
 
         if node.key and node.key != "root":
             current_path = path_parts + [node.key]
-            dotted_path = '.'.join(current_path)
+            dotted_path = ".".join(current_path)
 
             if isinstance(node.value, dict):
                 # Process dictionary values
@@ -362,9 +364,7 @@ def resolve_format_string(
     return formatted
 
 
-def _resolve_by_match_desc(
-    root: ConfigNode, path: Tuple[str, ...]
-) -> List[ConfigNode]:
+def _resolve_by_match_desc(root: ConfigNode, path: Tuple[str, ...]) -> List[ConfigNode]:
     """Internal function for resolving nodes by descending match priority.
 
     Implements a sophisticated matching algorithm that uses bit-shifting to
@@ -415,7 +415,7 @@ def _resolve_by_match_desc(
                     matched = True
                     # Calculate priority score using bit shifting
                     new_rank = match_rank + (1 << (len(original_path) - i))
-                    remaining_path = current_path[i+1:]
+                    remaining_path = current_path[i + 1 :]
                     queue.append((remaining_path, new_rank, next_node))
                     # Only add to results if this is the final path component
                     if not remaining_path:

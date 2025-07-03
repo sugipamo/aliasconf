@@ -136,7 +136,9 @@ class TestNormalizePath:
 
     def test_path_with_double_dots_raises_error(self):
         """Test that path with double dots raises error."""
-        with pytest.raises(ConfigValidationError, match="Path cannot contain empty components"):
+        with pytest.raises(
+            ConfigValidationError, match="Path cannot contain empty components"
+        ):
             normalize_path("python..timeout")
 
     def test_list_with_empty_string_raises_error(self):
@@ -157,10 +159,14 @@ class TestNormalizePath:
 
     def test_list_with_invalid_type_raises_error(self):
         """Test that list with invalid type raises error."""
-        with pytest.raises(ConfigValidationError, match="Path parts must be strings or integers"):
+        with pytest.raises(
+            ConfigValidationError, match="Path parts must be strings or integers"
+        ):
             normalize_path(["python", None, "timeout"])
 
-        with pytest.raises(ConfigValidationError, match="Path parts must be strings or integers"):
+        with pytest.raises(
+            ConfigValidationError, match="Path parts must be strings or integers"
+        ):
             normalize_path(["python", {"key": "value"}, "timeout"])
 
 
@@ -170,7 +176,11 @@ class TestValidateAliases:
     def test_valid_aliases_list(self):
         """Test validating valid aliases list."""
         assert validate_aliases(["py", "python3"]) == ["py", "python3"]
-        assert validate_aliases(["alias1", "alias2", "alias3"]) == ["alias1", "alias2", "alias3"]
+        assert validate_aliases(["alias1", "alias2", "alias3"]) == [
+            "alias1",
+            "alias2",
+            "alias3",
+        ]
 
     def test_aliases_with_spaces_stripped(self):
         """Test that aliases with spaces are stripped."""
@@ -202,10 +212,14 @@ class TestValidateAliases:
 
     def test_empty_string_alias_raises_error(self):
         """Test that empty string alias raises error."""
-        with pytest.raises(ConfigValidationError, match="Aliases cannot be empty strings"):
+        with pytest.raises(
+            ConfigValidationError, match="Aliases cannot be empty strings"
+        ):
             validate_aliases(["py", "", "python3"])
 
-        with pytest.raises(ConfigValidationError, match="Aliases cannot be empty strings"):
+        with pytest.raises(
+            ConfigValidationError, match="Aliases cannot be empty strings"
+        ):
             validate_aliases(["py", "   ", "python3"])
 
     def test_duplicate_alias_raises_error(self):
@@ -279,7 +293,7 @@ class TestFlattenDict:
             "str": "value",
             "int": 123,
             "list": [1, 2, 3],
-            "nested": {"bool": True, "none": None}
+            "nested": {"bool": True, "none": None},
         }
         result = flatten_dict(data)
         assert result == {
@@ -287,7 +301,7 @@ class TestFlattenDict:
             "int": 123,
             "list": [1, 2, 3],
             "nested.bool": True,
-            "nested.none": None
+            "nested.none": None,
         }
 
     def test_flatten_deeply_nested(self):
@@ -329,14 +343,14 @@ class TestUnflattenDict:
             "int": 123,
             "list": [1, 2, 3],
             "nested.bool": True,
-            "nested.none": None
+            "nested.none": None,
         }
         result = unflatten_dict(data)
         assert result == {
             "str": "value",
             "int": 123,
             "list": [1, 2, 3],
-            "nested": {"bool": True, "none": None}
+            "nested": {"bool": True, "none": None},
         }
 
     def test_unflatten_deeply_nested(self):
@@ -425,47 +439,69 @@ class TestValidateConfigStructure:
 
     def test_none_config_raises_error(self):
         """Test that None config raises error."""
-        with pytest.raises(ConfigValidationError, match="Configuration data cannot be None"):
+        with pytest.raises(
+            ConfigValidationError, match="Configuration data cannot be None"
+        ):
             validate_config_structure(None)
 
     def test_non_dict_config_raises_error(self):
         """Test that non-dict config raises error."""
-        with pytest.raises(ConfigValidationError, match="Configuration must be a dictionary"):
+        with pytest.raises(
+            ConfigValidationError, match="Configuration must be a dictionary"
+        ):
             validate_config_structure("not a dict")
 
-        with pytest.raises(ConfigValidationError, match="Configuration must be a dictionary"):
+        with pytest.raises(
+            ConfigValidationError, match="Configuration must be a dictionary"
+        ):
             validate_config_structure([1, 2, 3])
 
-        with pytest.raises(ConfigValidationError, match="Configuration must be a dictionary"):
+        with pytest.raises(
+            ConfigValidationError, match="Configuration must be a dictionary"
+        ):
             validate_config_structure(123)
 
     def test_empty_dict_without_allow_empty_raises_error(self):
         """Test that empty dict raises error when not allowed."""
-        with pytest.raises(ConfigValidationError, match="Configuration cannot be empty"):
+        with pytest.raises(
+            ConfigValidationError, match="Configuration cannot be empty"
+        ):
             validate_config_structure({})
 
     def test_reserved_keys_raise_error(self):
         """Test that reserved keys raise error."""
-        with pytest.raises(ConfigValidationError, match="Configuration key '.*' is reserved"):
+        with pytest.raises(
+            ConfigValidationError, match="Configuration key '.*' is reserved"
+        ):
             validate_config_structure({"__aliasconf_internal__": "value"})
 
-        with pytest.raises(ConfigValidationError, match="Configuration key '.*' is reserved"):
+        with pytest.raises(
+            ConfigValidationError, match="Configuration key '.*' is reserved"
+        ):
             validate_config_structure({"__meta__": "value"})
 
     def test_non_string_keys_raise_error(self):
         """Test that non-string keys raise error."""
-        with pytest.raises(ConfigValidationError, match="Configuration keys must be strings"):
+        with pytest.raises(
+            ConfigValidationError, match="Configuration keys must be strings"
+        ):
             validate_config_structure({123: "value"})
 
-        with pytest.raises(ConfigValidationError, match="Configuration keys must be strings"):
+        with pytest.raises(
+            ConfigValidationError, match="Configuration keys must be strings"
+        ):
             validate_config_structure({None: "value"})
 
     def test_empty_string_keys_raise_error(self):
         """Test that empty string keys raise error."""
-        with pytest.raises(ConfigValidationError, match="Configuration keys cannot be empty strings"):
+        with pytest.raises(
+            ConfigValidationError, match="Configuration keys cannot be empty strings"
+        ):
             validate_config_structure({"": "value"})
 
-        with pytest.raises(ConfigValidationError, match="Configuration keys cannot be empty strings"):
+        with pytest.raises(
+            ConfigValidationError, match="Configuration keys cannot be empty strings"
+        ):
             validate_config_structure({"   ": "value"})
 
     def test_nested_structure_validation(self):
@@ -475,14 +511,8 @@ class TestValidateConfigStructure:
             "database": {
                 "host": "localhost",
                 "port": 5432,
-                "credentials": {
-                    "username": "user",
-                    "password": "pass"
-                }
+                "credentials": {"username": "user", "password": "pass"},
             },
-            "cache": {
-                "enabled": True,
-                "ttl": 3600
-            }
+            "cache": {"enabled": True, "ttl": 3600},
         }
         validate_config_structure(config)  # Should not raise

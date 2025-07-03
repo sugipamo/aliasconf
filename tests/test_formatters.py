@@ -189,40 +189,28 @@ class TestRecursiveFormat:
         context = {
             "name": "Bob",
             "greeting": "Hello {name}",
-            "message": "{greeting}, welcome!"
+            "message": "{greeting}, welcome!",
         }
         result = recursive_format("{message}", context)
         assert result == "Hello Bob, welcome!"
 
     def test_recursive_format_deep_nesting(self):
         """Test recursive formatting with deep nesting."""
-        context = {
-            "a": "final",
-            "b": "{a}",
-            "c": "{b}",
-            "d": "{c}",
-            "e": "{d}"
-        }
+        context = {"a": "final", "b": "{a}", "c": "{b}", "d": "{c}", "e": "{d}"}
         result = recursive_format("{e}", context)
         assert result == "final"
 
     def test_recursive_format_max_iterations(self):
         """Test that max iterations prevents infinite loops."""
         # Create circular reference
-        context = {
-            "a": "{b}",
-            "b": "{a}"
-        }
+        context = {"a": "{b}", "b": "{a}"}
 
         with pytest.raises(ValueError, match="Maximum formatting iterations"):
             recursive_format("{a}", context, max_iterations=5)
 
     def test_recursive_format_partial_resolution(self):
         """Test recursive formatting with partial resolution."""
-        context = {
-            "greeting": "Hello {name}",
-            "message": "{greeting}!"
-        }
+        context = {"greeting": "Hello {name}", "message": "{greeting}!"}
         result = recursive_format("{message}", context)
         # Should resolve what it can
         assert result == "Hello {name}!"
@@ -244,18 +232,14 @@ class TestRecursiveFormat:
             "count": 42,
             "pi": 3.14,
             "flag": True,
-            "message": "Count: {count}, Pi: {pi}, Flag: {flag}"
+            "message": "Count: {count}, Pi: {pi}, Flag: {flag}",
         }
         result = recursive_format("{message}", context)
         assert result == "Count: 42, Pi: 3.14, Flag: True"
 
     def test_recursive_format_custom_iterations(self):
         """Test recursive formatting with custom iteration limit."""
-        context = {
-            "a": "{b}",
-            "b": "{c}",
-            "c": "done"
-        }
+        context = {"a": "{b}", "b": "{c}", "c": "done"}
         # Should complete in 3 iterations
         result = recursive_format("{a}", context, max_iterations=3)
         assert result == "done"

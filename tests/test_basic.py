@@ -18,12 +18,7 @@ class TestBasicFunctionality:
 
     def test_simple_config_creation(self):
         """Test creating a simple configuration."""
-        config_dict = {
-            "app": {
-                "name": "TestApp",
-                "version": "1.0.0"
-            }
-        }
+        config_dict = {"app": {"name": "TestApp", "version": "1.0.0"}}
 
         config = ConfigManager.from_dict(config_dict)
 
@@ -36,7 +31,7 @@ class TestBasicFunctionality:
             "python": {
                 "aliases": ["py", "python3"],
                 "timeout": 30,
-                "command": "python script.py"
+                "command": "python script.py",
             }
         }
 
@@ -57,11 +52,11 @@ class TestBasicFunctionality:
         """Test automatic type conversion."""
         config_dict = {
             "settings": {
-                "timeout": "30",      # String that should convert to int
-                "debug": "true",      # String that should convert to bool
-                "ratio": "1.5",       # String that should convert to float
-                "enabled": True,      # Already a bool
-                "count": 42           # Already an int
+                "timeout": "30",  # String that should convert to int
+                "debug": "true",  # String that should convert to bool
+                "ratio": "1.5",  # String that should convert to float
+                "enabled": True,  # Already a bool
+                "count": 42,  # Already an int
             }
         }
 
@@ -76,10 +71,7 @@ class TestBasicFunctionality:
     def test_type_conversion_errors(self):
         """Test that invalid type conversions raise appropriate errors."""
         config_dict = {
-            "settings": {
-                "invalid_int": "not_a_number",
-                "invalid_bool": "maybe"
-            }
+            "settings": {"invalid_int": "not_a_number", "invalid_bool": "maybe"}
         }
 
         config = ConfigManager.from_dict(config_dict)
@@ -92,11 +84,7 @@ class TestBasicFunctionality:
 
     def test_default_values(self):
         """Test default value handling."""
-        config_dict = {
-            "app": {
-                "name": "TestApp"
-            }
-        }
+        config_dict = {"app": {"name": "TestApp"}}
 
         config = ConfigManager.from_dict(config_dict)
 
@@ -115,10 +103,7 @@ class TestBasicFunctionality:
                 "primary": {
                     "host": "localhost",
                     "port": 5432,
-                    "credentials": {
-                        "username": "admin",
-                        "password": "secret"
-                    }
+                    "credentials": {"username": "admin", "password": "secret"},
                 }
             }
         }
@@ -132,14 +117,7 @@ class TestBasicFunctionality:
 
     def test_has_method(self):
         """Test the has() method for checking path existence."""
-        config_dict = {
-            "app": {
-                "name": "TestApp",
-                "settings": {
-                    "debug": True
-                }
-            }
-        }
+        config_dict = {"app": {"name": "TestApp", "settings": {"debug": True}}}
 
         config = ConfigManager.from_dict(config_dict)
 
@@ -154,7 +132,7 @@ class TestBasicFunctionality:
             "cpp": {
                 "aliases": ["c++", "cxx", "cplusplus"],
                 "compiler": "g++",
-                "flags": ["-std=c++17", "-Wall"]
+                "flags": ["-std=c++17", "-Wall"],
             }
         }
 
@@ -193,7 +171,7 @@ class TestBasicFunctionality:
         config_dict = {
             "python": {
                 "aliases": "not_a_list",  # Invalid: should be list
-                "timeout": 30
+                "timeout": 30,
             }
         }
 
@@ -202,11 +180,7 @@ class TestBasicFunctionality:
 
     def test_path_normalization(self):
         """Test different path input formats."""
-        config_dict = {
-            "app": {
-                "name": "TestApp"
-            }
-        }
+        config_dict = {"app": {"name": "TestApp"}}
 
         config = ConfigManager.from_dict(config_dict)
 
@@ -225,9 +199,7 @@ class TestConfigManagerMethods:
             "app": {
                 "aliases": ["application"],
                 "name": "TestApp",
-                "settings": {
-                    "debug": True
-                }
+                "settings": {"debug": True},
             }
         }
 
@@ -244,11 +216,7 @@ class TestConfigManagerMethods:
 
     def test_cache_functionality(self):
         """Test that caching works correctly."""
-        config_dict = {
-            "app": {
-                "name": "TestApp"
-            }
-        }
+        config_dict = {"app": {"name": "TestApp"}}
 
         config = ConfigManager.from_dict(config_dict)
 

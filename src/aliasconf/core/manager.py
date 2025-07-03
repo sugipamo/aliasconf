@@ -46,7 +46,7 @@ from .resolver import (
     resolve_values,
 )
 
-T = TypeVar('T')
+T = TypeVar("T")
 
 
 class ConfigManager:
@@ -90,7 +90,7 @@ class ConfigManager:
         self._use_optimized = True  # Flag to enable/disable optimization
 
     @classmethod
-    def from_dict(cls, data: Dict[str, Any]) -> 'ConfigManager':
+    def from_dict(cls, data: Dict[str, Any]) -> "ConfigManager":
         """Create ConfigManager from a dictionary.
 
         Args:
@@ -120,7 +120,7 @@ class ConfigManager:
         return instance
 
     @classmethod
-    def from_file(cls, file_path: Union[str, Path]) -> 'ConfigManager':
+    def from_file(cls, file_path: Union[str, Path]) -> "ConfigManager":
         """Load configuration from a file.
 
         Supports YAML and JSON file formats. Format is determined by file extension.
@@ -163,7 +163,7 @@ class ConfigManager:
         return cls.from_dict(data)
 
     @classmethod
-    def from_files(cls, *file_paths: Union[str, Path]) -> 'ConfigManager':
+    def from_files(cls, *file_paths: Union[str, Path]) -> "ConfigManager":
         """Load and merge configuration from multiple files.
 
         Files are merged in order, with later files taking precedence over earlier ones.
@@ -206,13 +206,22 @@ class ConfigManager:
                     merged_data = deep_merge_dicts(merged_data, data)
 
             except (yaml.YAMLError, json.JSONDecodeError) as e:
-                raise AliasConfError(f"Failed to parse configuration file {path}: {e}") from e
+                raise AliasConfError(
+                    f"Failed to parse configuration file {path}: {e}"
+                ) from e
             except OSError as e:
-                raise AliasConfError(f"Failed to read configuration file {path}: {e}") from e
+                raise AliasConfError(
+                    f"Failed to read configuration file {path}: {e}"
+                ) from e
 
         return cls.from_dict(merged_data)
 
-    def get(self, path: Union[str, List[str]], return_type: Type[T], default: Optional[T] = None) -> T:
+    def get(
+        self,
+        path: Union[str, List[str]],
+        return_type: Type[T],
+        default: Optional[T] = None,
+    ) -> T:
         """Get a configuration value with type safety.
 
         Resolves the configuration path through the tree structure and returns
@@ -249,7 +258,9 @@ class ConfigManager:
         try:
             # Use optimized resolver if enabled
             if self._use_optimized:
-                node = resolve_best_optimized(self._root, normalized_path, self._config_cache)
+                node = resolve_best_optimized(
+                    self._root, normalized_path, self._config_cache
+                )
             else:
                 node = resolve_best(self._root, normalized_path)
 
@@ -308,9 +319,7 @@ class ConfigManager:
 
     @overload
     def get_formatted(
-        self,
-        path: Union[str, List[str]],
-        context: Optional[Dict[str, Any]] = None
+        self, path: Union[str, List[str]], context: Optional[Dict[str, Any]] = None
     ) -> str: ...
 
     @overload
@@ -318,14 +327,14 @@ class ConfigManager:
         self,
         path: Union[str, List[str]],
         context: Optional[Dict[str, Any]],
-        return_type: Type[T]
+        return_type: Type[T],
     ) -> T: ...
 
     def get_formatted(
         self,
         path: Union[str, List[str]],
         context: Optional[Dict[str, Any]] = None,
-        return_type: Any = str
+        return_type: Any = str,
     ) -> Any:
         """Get a configuration value with template formatting.
 
@@ -358,7 +367,7 @@ class ConfigManager:
         formatted = resolve_formatted_string(template, self._root, context)
         return self._convert_value(formatted, return_type)
 
-    def merge(self, other: 'ConfigManager') -> 'ConfigManager':
+    def merge(self, other: "ConfigManager") -> "ConfigManager":
         """Merge this configuration with another ConfigManager.
 
         Creates a new ConfigManager with the configurations merged together.
@@ -415,7 +424,6 @@ class ConfigManager:
 
         return result
 
-
     def _convert_value(self, value: Any, target_type: Type[T]) -> T:
         """Convert a value to the specified type.
 
@@ -430,7 +438,9 @@ class ConfigManager:
             ConfigValidationError: If conversion fails
         """
         if value is None:
-            raise ConfigValidationError("Cannot convert None to any type without a default value")
+            raise ConfigValidationError(
+                "Cannot convert None to any type without a default value"
+            )
 
         if target_type is str:
             return cast(T, str(value))
@@ -440,7 +450,9 @@ class ConfigManager:
             try:
                 return cast(T, int(value))
             except (ValueError, TypeError) as e:
-                raise ConfigValidationError(f"Cannot convert {value} to int: {e}") from e
+                raise ConfigValidationError(
+                    f"Cannot convert {value} to int: {e}"
+                ) from e
         elif target_type is bool:
             if isinstance(value, bool):
                 return cast(T, value)
@@ -450,14 +462,18 @@ class ConfigManager:
                 elif value.lower() in ("false", "0", "no", "off"):
                     return cast(T, False)
                 else:
-                    raise ConfigValidationError(f"Cannot convert string '{value}' to bool")
+                    raise ConfigValidationError(
+                        f"Cannot convert string '{value}' to bool"
+                    )
             else:
                 raise ConfigValidationError(f"Cannot convert {type(value)} to bool")
         elif target_type is float:
             try:
                 return cast(T, float(value))
             except (ValueError, TypeError) as e:
-                raise ConfigValidationError(f"Cannot convert {value} to float: {e}") from e
+                raise ConfigValidationError(
+                    f"Cannot convert {value} to float: {e}"
+                ) from e
         elif target_type is list:
             if isinstance(value, list):
                 return cast(T, value)
@@ -473,7 +489,9 @@ class ConfigManager:
             if isinstance(value, target_type):
                 return value
             else:
-                raise ConfigValidationError(f"Cannot convert {type(value)} to {target_type}")
+                raise ConfigValidationError(
+                    f"Cannot convert {type(value)} to {target_type}"
+                )
 
     def clear_cache(self) -> None:
         """Clear all internal caches.

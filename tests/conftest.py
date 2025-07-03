@@ -16,9 +16,7 @@ from aliasconf import ConfigManager
 
 
 # Test data generators
-def generate_nested_config(
-    depth: int = 3, width: int = 3
-) -> Dict[str, Any]:
+def generate_nested_config(depth: int = 3, width: int = 3) -> Dict[str, Any]:
     """
     Generate a nested configuration structure for testing.
 
@@ -29,6 +27,7 @@ def generate_nested_config(
     Returns:
         Nested dictionary configuration
     """
+
     def _generate_level(current_depth: int) -> Dict[str, Any]:
         if current_depth <= 0:
             return {f"leaf_{i}": f"value_{i}" for i in range(width)}
@@ -74,16 +73,8 @@ def generate_flat_config(num_keys: int = 100) -> Dict[str, Any]:
 def simple_config():
     """Provide a simple test configuration."""
     return {
-        "app": {
-            "name": "TestApp",
-            "version": "1.0.0",
-            "debug": False
-        },
-        "database": {
-            "aliases": ["db"],
-            "host": "localhost",
-            "port": 5432
-        }
+        "app": {"name": "TestApp", "version": "1.0.0", "debug": False},
+        "database": {"aliases": ["db"], "host": "localhost", "port": 5432},
     }
 
 
@@ -100,8 +91,8 @@ def nested_config():
                         "auth": {
                             "aliases": ["auth_v1"],
                             "enabled": True,
-                            "token_expiry": 3600
-                        }
+                            "token_expiry": 3600,
+                        },
                     }
                 }
             }
@@ -116,18 +107,18 @@ def alias_heavy_config():
         "python": {
             "aliases": ["py", "python3", "python-lang", "snake"],
             "version": "3.9",
-            "path": "/usr/bin/python3"
+            "path": "/usr/bin/python3",
         },
         "javascript": {
             "aliases": ["js", "node", "nodejs", "ecmascript"],
             "version": "14.0",
-            "path": "/usr/bin/node"
+            "path": "/usr/bin/node",
         },
         "cpp": {
             "aliases": ["c++", "cplusplus", "cxx"],
             "version": "11",
-            "compiler": "g++"
-        }
+            "compiler": "g++",
+        },
     }
 
 
@@ -135,15 +126,12 @@ def alias_heavy_config():
 def template_config():
     """Provide a configuration with template strings."""
     return {
-        "base": {
-            "url": "https://example.com",
-            "api_version": "v1"
-        },
+        "base": {"url": "https://example.com", "api_version": "v1"},
         "endpoints": {
             "api": "{base.url}/api/{base.api_version}",
             "auth": "{endpoints.api}/auth",
-            "users": "{endpoints.api}/users"
-        }
+            "users": "{endpoints.api}/users",
+        },
     }
 
 
@@ -182,22 +170,11 @@ def json_config_file(temp_config_dir, simple_config):
 @pytest.fixture
 def multi_config_files(temp_config_dir):
     """Create multiple config files for testing."""
-    base_config = {
-        "app": {
-            "name": "BaseApp",
-            "version": "1.0.0"
-        }
-    }
+    base_config = {"app": {"name": "BaseApp", "version": "1.0.0"}}
 
     override_config = {
-        "app": {
-            "version": "2.0.0",
-            "debug": True
-        },
-        "features": {
-            "aliases": ["feat"],
-            "new_ui": True
-        }
+        "app": {"version": "2.0.0", "debug": True},
+        "features": {"aliases": ["feat"], "new_ui": True},
     }
 
     base_path = temp_config_dir / "base.yaml"
@@ -259,24 +236,9 @@ def capture_performance():
 def sample_configs():
     """Provide a collection of sample configurations for testing."""
     return {
-        "minimal": {
-            "key": "value"
-        },
-        "with_aliases": {
-            "service": {
-                "aliases": ["svc", "srv"],
-                "port": 8080
-            }
-        },
-        "nested": {
-            "level1": {
-                "level2": {
-                    "level3": {
-                        "value": "deep"
-                    }
-                }
-            }
-        },
+        "minimal": {"key": "value"},
+        "with_aliases": {"service": {"aliases": ["svc", "srv"], "port": 8080}},
+        "nested": {"level1": {"level2": {"level3": {"value": "deep"}}}},
         "mixed_types": {
             "string": "text",
             "number": 42,
@@ -284,8 +246,8 @@ def sample_configs():
             "boolean": True,
             "list": [1, 2, 3],
             "dict": {"nested": "value"},
-            "null": None
-        }
+            "null": None,
+        },
     }
 
 
@@ -295,15 +257,9 @@ def pytest_configure(config):
     config.addinivalue_line(
         "markers", "slow: marks tests as slow (deselect with '-m \"not slow\"')"
     )
-    config.addinivalue_line(
-        "markers", "integration: marks tests as integration tests"
-    )
-    config.addinivalue_line(
-        "markers", "performance: marks tests as performance tests"
-    )
-    config.addinivalue_line(
-        "markers", "edge_case: marks tests as edge case tests"
-    )
+    config.addinivalue_line("markers", "integration: marks tests as integration tests")
+    config.addinivalue_line("markers", "performance: marks tests as performance tests")
+    config.addinivalue_line("markers", "edge_case: marks tests as edge case tests")
 
 
 # Parametrized test data
@@ -333,17 +289,12 @@ PATH_FORMAT_TEST_CASES = [
 
 
 # Utility functions for tests
-def assert_config_equal(
-    config1: Dict[str, Any], config2: Dict[str, Any]
-) -> None:
+def assert_config_equal(config1: Dict[str, Any], config2: Dict[str, Any]) -> None:
     """Assert two configurations are equal (ignoring aliases)."""
+
     def remove_aliases(d):
         if isinstance(d, dict):
-            return {
-                k: remove_aliases(v)
-                for k, v in d.items()
-                if k != "aliases"
-            }
+            return {k: remove_aliases(v) for k, v in d.items() if k != "aliases"}
         elif isinstance(d, list):
             return [remove_aliases(item) for item in d]
         else:

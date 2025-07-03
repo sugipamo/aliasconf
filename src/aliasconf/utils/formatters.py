@@ -10,9 +10,7 @@ from functools import lru_cache
 from typing import Any, Dict, List, Tuple
 
 
-def format_with_missing_keys(
-    template: str, **kwargs: Any
-) -> Tuple[str, List[str]]:
+def format_with_missing_keys(template: str, **kwargs: Any) -> Tuple[str, List[str]]:
     """Format template with partial data, returning missing keys.
 
     This function formats a template string with the provided keyword arguments,
@@ -96,14 +94,14 @@ def validate_template_syntax(template: str) -> Tuple[bool, str]:
     in_placeholder = False
 
     for i, char in enumerate(template):
-        if char == '{':
+        if char == "{":
             if in_placeholder:
                 # Nested braces are not allowed
                 return False, f"Unmatched nested opening brace at position {i}"
             brace_count += 1
             if brace_count == 1:
                 in_placeholder = True
-        elif char == '}':
+        elif char == "}":
             if brace_count == 0:
                 return False, f"Unmatched closing brace at position {i}"
             brace_count -= 1
@@ -113,7 +111,7 @@ def validate_template_syntax(template: str) -> Tuple[bool, str]:
     if brace_count > 0:
         # Find the position of the unmatched opening brace
         for i, char in enumerate(template):
-            if char == '{':
+            if char == "{":
                 brace_count -= 1
                 if brace_count == 0:
                     return False, f"Unmatched opening brace at position {i}"

@@ -39,10 +39,7 @@ class TestCreateConfigRootFromDict:
             "database": {
                 "host": "localhost",
                 "port": 5432,
-                "credentials": {
-                    "username": "admin",
-                    "password": "secret"
-                }
+                "credentials": {"username": "admin", "password": "secret"},
             }
         }
         root = create_config_root_from_dict(data)
@@ -60,12 +57,7 @@ class TestCreateConfigRootFromDict:
 
     def test_create_with_aliases(self):
         """Test creating config tree with aliases."""
-        data = {
-            "python": {
-                "aliases": ["py", "python3"],
-                "timeout": 30
-            }
-        }
+        data = {"python": {"aliases": ["py", "python3"], "timeout": 30}}
         root = create_config_root_from_dict(data)
 
         python_node = next(n for n in root.next_nodes if n.key == "python")
@@ -81,7 +73,7 @@ class TestCreateConfigRootFromDict:
         """Test creating config tree with list values."""
         data = {
             "servers": ["server1", "server2", "server3"],
-            "ports": [8000, 8001, 8002]
+            "ports": [8000, 8001, 8002],
         }
         root = create_config_root_from_dict(data)
 
@@ -99,10 +91,7 @@ class TestCreateConfigRootFromDict:
     def test_create_with_mixed_structure(self):
         """Test creating config tree with mixed dict/list structure."""
         data = {
-            "apps": [
-                {"name": "app1", "port": 8000},
-                {"name": "app2", "port": 8001}
-            ]
+            "apps": [{"name": "app1", "port": 8000}, {"name": "app2", "port": 8001}]
         }
         root = create_config_root_from_dict(data)
 
@@ -114,24 +103,25 @@ class TestCreateConfigRootFromDict:
 
     def test_create_with_invalid_aliases_type(self):
         """Test that invalid aliases type raises error."""
-        data = {
-            "python": {
-                "aliases": "py",  # Should be a list
-                "timeout": 30
-            }
-        }
+        data = {"python": {"aliases": "py", "timeout": 30}}  # Should be a list
         with pytest.raises(ConfigValidationError, match="aliases must be a list type"):
             create_config_root_from_dict(data)
 
     def test_create_with_non_dict_raises_error(self):
         """Test that non-dict data raises error."""
-        with pytest.raises(ConfigResolverError, match="Only dictionary data is supported"):
+        with pytest.raises(
+            ConfigResolverError, match="Only dictionary data is supported"
+        ):
             create_config_root_from_dict("not a dict")
 
-        with pytest.raises(ConfigResolverError, match="Only dictionary data is supported"):
+        with pytest.raises(
+            ConfigResolverError, match="Only dictionary data is supported"
+        ):
             create_config_root_from_dict([1, 2, 3])
 
-        with pytest.raises(ConfigResolverError, match="Only dictionary data is supported"):
+        with pytest.raises(
+            ConfigResolverError, match="Only dictionary data is supported"
+        ):
             create_config_root_from_dict(None)
 
     def test_create_empty_dict(self):
@@ -147,15 +137,7 @@ class TestFindKeyInTree:
 
     def test_find_existing_key(self):
         """Test finding an existing key in the tree."""
-        data = {
-            "database": {
-                "host": "localhost",
-                "port": 5432
-            },
-            "cache": {
-                "ttl": 3600
-            }
-        }
+        data = {"database": {"host": "localhost", "port": 5432}, "cache": {"ttl": 3600}}
         root = create_config_root_from_dict(data)
 
         # Find direct key
@@ -173,9 +155,7 @@ class TestFindKeyInTree:
     def test_find_key_with_value_dict(self):
         """Test finding key that has value in dict format."""
         data = {
-            "config": {
-                "timeout": {"value": 30, "description": "Timeout in seconds"}
-            }
+            "config": {"timeout": {"value": 30, "description": "Timeout in seconds"}}
         }
         root = create_config_root_from_dict(data)
 
@@ -184,19 +164,14 @@ class TestFindKeyInTree:
 
     def test_find_key_in_deep_tree(self):
         """Test finding key in deeply nested tree."""
-        data = {
-            "a": {"b": {"c": {"d": {"e": "deep_value"}}}}
-        }
+        data = {"a": {"b": {"c": {"d": {"e": "deep_value"}}}}}
         root = create_config_root_from_dict(data)
 
         assert _find_key_in_tree(root, "e") == "deep_value"
 
     def test_find_duplicate_keys(self):
         """Test finding when multiple nodes have same key."""
-        data = {
-            "dev": {"port": 8000},
-            "prod": {"port": 9000}
-        }
+        data = {"dev": {"port": 8000}, "prod": {"port": 9000}}
         root = create_config_root_from_dict(data)
 
         # Should find one of them (BFS order)
@@ -209,12 +184,7 @@ class TestResolveDottedPath:
 
     def test_resolve_simple_path(self):
         """Test resolving simple dotted path."""
-        data = {
-            "database": {
-                "host": "localhost",
-                "port": 5432
-            }
-        }
+        data = {"database": {"host": "localhost", "port": 5432}}
         root = create_config_root_from_dict(data)
 
         result = _resolve_dotted_path(root, ["database", "host"])
@@ -222,15 +192,7 @@ class TestResolveDottedPath:
 
     def test_resolve_deep_path(self):
         """Test resolving deeply nested path."""
-        data = {
-            "app": {
-                "database": {
-                    "primary": {
-                        "host": "db1.example.com"
-                    }
-                }
-            }
-        }
+        data = {"app": {"database": {"primary": {"host": "db1.example.com"}}}}
         root = create_config_root_from_dict(data)
 
         result = _resolve_dotted_path(root, ["app", "database", "primary", "host"])
@@ -246,11 +208,7 @@ class TestResolveDottedPath:
 
     def test_resolve_with_value_dict(self):
         """Test resolving path to node with value dict."""
-        data = {
-            "settings": {
-                "timeout": {"value": 60, "unit": "seconds"}
-            }
-        }
+        data = {"settings": {"timeout": {"value": 60, "unit": "seconds"}}}
         root = create_config_root_from_dict(data)
 
         result = _resolve_dotted_path(root, ["settings", "timeout"])
@@ -262,12 +220,7 @@ class TestResolveByMatchDesc:
 
     def test_resolve_exact_match(self):
         """Test resolving with exact path match."""
-        data = {
-            "python": {
-                "timeout": 30,
-                "command": "python3"
-            }
-        }
+        data = {"python": {"timeout": 30, "command": "python3"}}
         root = create_config_root_from_dict(data)
 
         nodes = resolve_by_match_desc(root, ["python", "timeout"])
@@ -276,12 +229,7 @@ class TestResolveByMatchDesc:
 
     def test_resolve_with_aliases(self):
         """Test resolving using aliases."""
-        data = {
-            "python": {
-                "aliases": ["py", "python3"],
-                "timeout": 30
-            }
-        }
+        data = {"python": {"aliases": ["py", "python3"], "timeout": 30}}
         root = create_config_root_from_dict(data)
 
         # Resolve using alias
@@ -296,13 +244,7 @@ class TestResolveByMatchDesc:
 
     def test_resolve_partial_match(self):
         """Test resolving with partial path match."""
-        data = {
-            "app": {
-                "database": {
-                    "host": "localhost"
-                }
-            }
-        }
+        data = {"app": {"database": {"host": "localhost"}}}
         root = create_config_root_from_dict(data)
 
         # Should still find host even with partial path
@@ -322,13 +264,8 @@ class TestResolveByMatchDesc:
     def test_resolve_priority_ordering(self):
         """Test that results are ordered by match priority."""
         data = {
-            "python": {
-                "aliases": ["py"],
-                "version": "3.9"
-            },
-            "py": {
-                "version": "2.7"  # Less specific match
-            }
+            "python": {"aliases": ["py"], "version": "3.9"},
+            "py": {"version": "2.7"},  # Less specific match
         }
         root = create_config_root_from_dict(data)
 
@@ -342,12 +279,7 @@ class TestResolveBest:
 
     def test_resolve_best_match(self):
         """Test getting the best match from resolver."""
-        data = {
-            "python": {
-                "timeout": 30,
-                "retry": 3
-            }
-        }
+        data = {"python": {"timeout": 30, "retry": 3}}
         root = create_config_root_from_dict(data)
 
         node = resolve_best(root, ["python", "timeout"])
@@ -356,12 +288,7 @@ class TestResolveBest:
 
     def test_resolve_best_with_aliases(self):
         """Test resolve_best with alias resolution."""
-        data = {
-            "python": {
-                "aliases": ["py", "python3"],
-                "path": "/usr/bin/python3"
-            }
-        }
+        data = {"python": {"aliases": ["py", "python3"], "path": "/usr/bin/python3"}}
         root = create_config_root_from_dict(data)
 
         # All should resolve to same node
@@ -382,12 +309,8 @@ class TestResolveBest:
     def test_resolve_best_chooses_highest_priority(self):
         """Test that resolve_best chooses highest priority match."""
         data = {
-            "dev": {
-                "database": {"host": "dev.db.com"}
-            },
-            "database": {
-                "host": "prod.db.com"
-            }
+            "dev": {"database": {"host": "dev.db.com"}},
+            "database": {"host": "prod.db.com"},
         }
         root = create_config_root_from_dict(data)
 
@@ -401,10 +324,7 @@ class TestResolveFormattedString:
 
     def test_resolve_simple_template(self):
         """Test resolving simple template string."""
-        data = {
-            "name": "John",
-            "greeting": "Hello {name}!"
-        }
+        data = {"name": "John", "greeting": "Hello {name}!"}
         root = create_config_root_from_dict(data)
 
         result = resolve_formatted_string("Hello {name}!", root)
@@ -412,11 +332,7 @@ class TestResolveFormattedString:
 
     def test_resolve_multiple_placeholders(self):
         """Test resolving template with multiple placeholders."""
-        data = {
-            "host": "localhost",
-            "port": "8080",
-            "url": "http://{host}:{port}"
-        }
+        data = {"host": "localhost", "port": "8080", "url": "http://{host}:{port}"}
         root = create_config_root_from_dict(data)
 
         result = resolve_formatted_string("http://{host}:{port}", root)
@@ -425,12 +341,8 @@ class TestResolveFormattedString:
     def test_resolve_nested_reference(self):
         """Test resolving template with nested references."""
         data = {
-            "base": {
-                "url": "example.com"
-            },
-            "api": {
-                "endpoint": "https://{base.url}/api"
-            }
+            "base": {"url": "example.com"},
+            "api": {"endpoint": "https://{base.url}/api"},
         }
         root = create_config_root_from_dict(data)
 
@@ -457,10 +369,7 @@ class TestResolveFormattedString:
 
     def test_resolve_with_circular_reference(self):
         """Test that circular references are handled."""
-        data = {
-            "a": "{b}",
-            "b": "{a}"
-        }
+        data = {"a": "{b}", "b": "{a}"}
         root = create_config_root_from_dict(data)
 
         # Should not get stuck in infinite loop
@@ -470,10 +379,7 @@ class TestResolveFormattedString:
 
     def test_resolve_formatted_string_with_list_index(self):
         """Test resolving template referencing list items."""
-        data = {
-            "servers": ["server1", "server2", "server3"],
-            "primary": "{servers.0}"
-        }
+        data = {"servers": ["server1", "server2", "server3"], "primary": "{servers.0}"}
         root = create_config_root_from_dict(data)
 
         result = resolve_formatted_string("{servers.0}", root)
@@ -489,10 +395,7 @@ class TestResolveFormattedString:
 
     def test_resolve_formatted_string_special_chars(self):
         """Test resolving template with special characters."""
-        data = {
-            "path": "/usr/local/bin",
-            "file": "script.sh"
-        }
+        data = {"path": "/usr/local/bin", "file": "script.sh"}
         root = create_config_root_from_dict(data)
 
         result = resolve_formatted_string("{path}/{file}", root)

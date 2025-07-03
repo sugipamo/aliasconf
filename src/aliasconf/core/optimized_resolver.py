@@ -58,9 +58,7 @@ def _resolve_by_match_desc_optimized(
                 results.append((1 << len(path), node))
             else:
                 # Try to resolve remaining path from this node
-                child_results = _resolve_children_fast(
-                    node, remaining, len(path) - i
-                )
+                child_results = _resolve_children_fast(node, remaining, len(path) - i)
                 results.extend(child_results)
 
     # Check aliases for the first component

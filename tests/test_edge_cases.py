@@ -22,18 +22,9 @@ class TestAliasEdgeCases:
     def test_circular_reference_aliases(self):
         """Test handling of potential circular references in aliases."""
         config_dict = {
-            "python": {
-                "aliases": ["py"],
-                "command": "python"
-            },
-            "py": {
-                "aliases": ["python3"],
-                "version": "3.9"
-            },
-            "python3": {
-                "aliases": ["python"],
-                "path": "/usr/bin/python3"
-            }
+            "python": {"aliases": ["py"], "command": "python"},
+            "py": {"aliases": ["python3"], "version": "3.9"},
+            "python3": {"aliases": ["python"], "path": "/usr/bin/python3"},
         }
 
         config = ConfigManager.from_dict(config_dict)
@@ -51,7 +42,7 @@ class TestAliasEdgeCases:
                     "api": {
                         "v1": {
                             "aliases": ["api-v1", "apiv1", "v1-api"],
-                            "endpoint": "https://api.example.com/v1"
+                            "endpoint": "https://api.example.com/v1",
                         }
                     }
                 }
@@ -70,14 +61,8 @@ class TestAliasEdgeCases:
     def test_same_name_aliases_priority(self):
         """Test priority when multiple nodes have the same alias."""
         config_dict = {
-            "python": {
-                "aliases": ["py"],
-                "version": "3.9"
-            },
-            "python2": {
-                "aliases": ["py"],  # Same alias
-                "version": "2.7"
-            }
+            "python": {"aliases": ["py"], "version": "3.9"},
+            "python2": {"aliases": ["py"], "version": "2.7"},  # Same alias
         }
 
         config = ConfigManager.from_dict(config_dict)
@@ -91,7 +76,7 @@ class TestAliasEdgeCases:
         config_dict = {
             "cpp": {
                 "aliases": ["c++", "c#", "c@lang", "c-plus-plus", "c_plus_plus"],
-                "compiler": "g++"
+                "compiler": "g++",
             }
         }
 
@@ -103,12 +88,7 @@ class TestAliasEdgeCases:
 
     def test_empty_aliases_list(self):
         """Test handling of empty aliases list."""
-        config_dict = {
-            "python": {
-                "aliases": [],  # Empty list
-                "version": "3.9"
-            }
-        }
+        config_dict = {"python": {"aliases": [], "version": "3.9"}}  # Empty list
 
         config = ConfigManager.from_dict(config_dict)
 
@@ -120,7 +100,7 @@ class TestAliasEdgeCases:
         config_dict = {
             "python": {
                 "aliases": ["py", "python3", "py", "python3"],  # Duplicates
-                "version": "3.9"
+                "version": "3.9",
             }
         }
 
@@ -136,7 +116,7 @@ class TestAliasEdgeCases:
         config_dict = {
             "python": {
                 "aliases": ["python", "py"],  # 'python' is same as key
-                "version": "3.9"
+                "version": "3.9",
             }
         }
 
@@ -152,11 +132,7 @@ class TestConfigResolutionEdgeCases:
 
     def test_nonexistent_deep_path(self):
         """Test accessing deeply nested non-existent paths."""
-        config_dict = {
-            "app": {
-                "name": "test"
-            }
-        }
+        config_dict = {"app": {"name": "test"}}
 
         config = ConfigManager.from_dict(config_dict)
 
@@ -165,7 +141,9 @@ class TestConfigResolutionEdgeCases:
             config.get("app.settings.database.host.port", str)
 
         # With default
-        assert config.get("app.settings.database.host.port", str, "default") == "default"
+        assert (
+            config.get("app.settings.database.host.port", str, "default") == "default"
+        )
 
     def test_type_conversion_extreme_values(self):
         """Test type conversion with extreme/boundary values."""
@@ -176,7 +154,7 @@ class TestConfigResolutionEdgeCases:
                 "large_float": "1.7976931348623157e+308",  # Near max float
                 "small_float": "2.2250738585072014e-308",  # Near min positive float
                 "zero": "0",
-                "negative_zero": "-0"
+                "negative_zero": "-0",
             }
         }
 
@@ -220,9 +198,9 @@ class TestConfigResolutionEdgeCases:
                 "welcome": "Hello, 世界! 🌍",
                 "emoji": "🐍 Python 🚀",
                 "special": "Line1\nLine2\tTabbed\r\nWindows",
-                "quotes": 'Single \' and double " quotes',
+                "quotes": "Single ' and double \" quotes",
                 "backslash": "C:\\path\\to\\file",
-                "null_char": "Contains\x00null"
+                "null_char": "Contains\x00null",
             }
         }
 
@@ -232,18 +210,14 @@ class TestConfigResolutionEdgeCases:
         assert config.get("messages.welcome", str) == "Hello, 世界! 🌍"
         assert config.get("messages.emoji", str) == "🐍 Python 🚀"
         assert config.get("messages.special", str) == "Line1\nLine2\tTabbed\r\nWindows"
-        assert config.get("messages.quotes", str) == 'Single \' and double " quotes'
+        assert config.get("messages.quotes", str) == "Single ' and double \" quotes"
         assert config.get("messages.backslash", str) == "C:\\path\\to\\file"
         assert config.get("messages.null_char", str) == "Contains\x00null"
 
     def test_empty_string_values(self):
         """Test handling of empty string values."""
         config_dict = {
-            "strings": {
-                "empty": "",
-                "whitespace": "   ",
-                "newlines": "\n\n\n"
-            }
+            "strings": {"empty": "", "whitespace": "   ", "newlines": "\n\n\n"}
         }
 
         config = ConfigManager.from_dict(config_dict)
@@ -259,10 +233,7 @@ class TestConfigResolutionEdgeCases:
             "database": {
                 "host": "localhost",
                 "password": None,
-                "options": {
-                    "timeout": None,
-                    "retry": 3
-                }
+                "options": {"timeout": None, "retry": 3},
             }
         }
 
@@ -288,7 +259,7 @@ class TestTemplateEdgeCases:
                 "url": "https://example.com",
                 "api": "{base.url}/api",
                 "v1": "{base.api}/v1",
-                "endpoint": "{base.v1}/users"
+                "endpoint": "{base.v1}/users",
             }
         }
 
@@ -304,7 +275,7 @@ class TestTemplateEdgeCases:
         config_dict = {
             "messages": {
                 "greeting": "Hello, {name}!",
-                "complex": "User {user.name} from {user.country}"
+                "complex": "User {user.name} from {user.country}",
             }
         }
 
@@ -324,8 +295,8 @@ class TestTemplateEdgeCases:
         config_dict = {
             "patterns": {
                 "regex": "{{pattern}}",  # Double brackets
-                "format": "{{{key}}}",   # Triple brackets
-                "mixed": "Start {value} {{literal}} end"
+                "format": "{{{key}}}",  # Triple brackets
+                "mixed": "Start {value} {{literal}} end",
             }
         }
 
@@ -348,7 +319,7 @@ class TestTemplateEdgeCases:
         config_dict = {
             "templates": {
                 "path": "{user-name}/{app.id}",
-                "complex": "{data[0]}/{info['key']}"
+                "complex": "{data[0]}/{info['key']}",
             }
         }
 
@@ -359,7 +330,7 @@ class TestTemplateEdgeCases:
             "user-name": "john",
             "app.id": "123",
             "data[0]": "first",
-            "info['key']": "value"
+            "info['key']": "value",
         }
 
         # Should handle or gracefully fail with special characters
@@ -376,11 +347,7 @@ class TestBoundaryConditions:
 
     def test_empty_path_components(self):
         """Test paths with empty components."""
-        config_dict = {
-            "app": {
-                "name": "test"
-            }
-        }
+        config_dict = {"app": {"name": "test"}}
 
         config = ConfigManager.from_dict(config_dict)
 
@@ -398,10 +365,7 @@ class TestBoundaryConditions:
         """Test handling of very long alias names."""
         long_alias = "a" * 1000  # 1000 character alias
         config_dict = {
-            "service": {
-                "aliases": [long_alias, "short"],
-                "url": "https://example.com"
-            }
+            "service": {"aliases": [long_alias, "short"], "url": "https://example.com"}
         }
 
         config = ConfigManager.from_dict(config_dict)
@@ -414,12 +378,7 @@ class TestBoundaryConditions:
         """Test nodes with many aliases."""
         # Create 1000 aliases
         aliases = [f"alias_{i}" for i in range(1000)]
-        config_dict = {
-            "service": {
-                "aliases": aliases,
-                "status": "active"
-            }
-        }
+        config_dict = {"service": {"aliases": aliases, "status": "active"}}
 
         config = ConfigManager.from_dict(config_dict)
 
@@ -430,12 +389,7 @@ class TestBoundaryConditions:
     def test_large_list_values(self):
         """Test configuration with large list values."""
         large_list = list(range(10000))  # 10,000 items
-        config_dict = {
-            "data": {
-                "items": large_list,
-                "count": len(large_list)
-            }
-        }
+        config_dict = {"data": {"items": large_list, "count": len(large_list)}}
 
         config = ConfigManager.from_dict(config_dict)
 
@@ -453,11 +407,8 @@ class TestBoundaryConditions:
                 "number_val": 42,
                 "bool_val": True,
                 "list_val": [1, 2, 3],
-                "nested": {
-                    "aliases": ["nested_alias"],
-                    "value": "nested_value"
-                },
-                "null_val": None
+                "nested": {"aliases": ["nested_alias"], "value": "nested_value"},
+                "null_val": None,
             }
         }
 
@@ -494,7 +445,7 @@ class TestErrorHandlingEdgeCases:
         config_dict = {
             "__init__": {"value": "test"},
             "__class__": {"value": "test"},
-            "__dict__": {"value": "test"}
+            "__dict__": {"value": "test"},
         }
 
         # Should either handle gracefully or raise appropriate error
@@ -510,14 +461,7 @@ class TestErrorHandlingEdgeCases:
         """Test handling of cyclic references in configuration."""
         # Note: Direct cyclic references aren't possible in JSON/YAML,
         # but we can test similar scenarios
-        config_dict = {
-            "a": {
-                "ref": "{b.value}"
-            },
-            "b": {
-                "ref": "{a.value}"
-            }
-        }
+        config_dict = {"a": {"ref": "{b.value}"}, "b": {"ref": "{a.value}"}}
 
         config = ConfigManager.from_dict(config_dict)
 

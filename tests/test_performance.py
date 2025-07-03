@@ -25,7 +25,7 @@ class TestPerformanceBenchmarks:
                 "aliases": [f"svc_{i}", f"s{i}"],
                 "host": f"host{i}.example.com",
                 "port": 8000 + i,
-                "enabled": i % 2 == 0
+                "enabled": i % 2 == 0,
             }
             for i in range(50)
         }
@@ -56,9 +56,7 @@ class TestPerformanceBenchmarks:
             for j in range(10):
                 config_dict[f"category_{i}"][f"subcategory_{j}"] = {}
                 for k in range(10):
-                    config_dict[f"category_{i}"][f"subcategory_{j}"][
-                        f"item_{k}"
-                    ] = {
+                    config_dict[f"category_{i}"][f"subcategory_{j}"][f"item_{k}"] = {
                         "aliases": [f"alias_{i}_{j}_{k}"],
                         "value": f"value_{i}_{j}_{k}",
                     }
@@ -88,11 +86,7 @@ class TestPerformanceBenchmarks:
             for j in range(100):
                 section[f"item_{j}"] = {
                     "aliases": [f"i{i}_{j}", f"item{i}{j}"],
-                    "data": {
-                        "value": i * j,
-                        "name": f"Item {i}-{j}",
-                        "enabled": True
-                    }
+                    "data": {"value": i * j, "name": f"Item {i}-{j}", "enabled": True},
                 }
             config_dict[f"section_{i}"] = section
 
@@ -124,10 +118,7 @@ class TestAliasPerformance:
         for i in range(10):
             num_aliases = 10 ** (i % 4)  # 1, 10, 100, 1000 aliases
             aliases = [f"alias_{i}_{j}" for j in range(num_aliases)]
-            config_dict[f"node_{i}"] = {
-                "aliases": aliases,
-                "value": f"value_{i}"
-            }
+            config_dict[f"node_{i}"] = {"aliases": aliases, "value": f"value_{i}"}
 
         start_time = time.time()
         config = ConfigManager.from_dict(config_dict)
@@ -159,13 +150,13 @@ class TestAliasPerformance:
                                 "nested": {
                                     "level_3": {
                                         "aliases": ["l3"],
-                                        "value": "deep_value"
+                                        "value": "deep_value",
                                     }
-                                }
+                                },
                             }
-                        }
+                        },
                     }
-                }
+                },
             }
         }
 
@@ -185,11 +176,7 @@ class TestAliasPerformance:
             "services": {
                 "database": {
                     "aliases": ["db", "database-service", "data", "storage"],
-                    "config": {
-                        "host": "localhost",
-                        "port": 5432,
-                        "name": "mydb"
-                    }
+                    "config": {"host": "localhost", "port": 5432, "name": "mydb"},
                 }
             }
         }
@@ -219,11 +206,7 @@ class TestCachePerformance:
     def test_cache_hit_performance(self):
         """Test performance improvement from cache hits."""
         config_dict = {
-            f"item_{i}": {
-                "value": f"value_{i}",
-                "number": i
-            }
-            for i in range(100)
+            f"item_{i}": {"value": f"value_{i}", "number": i} for i in range(100)
         }
 
         config = ConfigManager.from_dict(config_dict)
@@ -246,10 +229,7 @@ class TestCachePerformance:
     def test_cache_memory_overhead(self):
         """Test that cache doesn't cause excessive memory usage."""
         config_dict = {
-            f"item_{i}": {
-                "data": "x" * 1000  # 1KB string
-            }
-            for i in range(1000)
+            f"item_{i}": {"data": "x" * 1000} for i in range(1000)  # 1KB string
         }
 
         config = ConfigManager.from_dict(config_dict)
@@ -305,11 +285,7 @@ class TestScalabilityLimits:
         """Test performance with very wide flat structure."""
         # Create 10,000 top-level keys
         config_dict = {
-            f"key_{i}": {
-                "value": i,
-                "name": f"Item {i}"
-            }
-            for i in range(10000)
+            f"key_{i}": {"value": i, "name": f"Item {i}"} for i in range(10000)
         }
 
         start_time = time.time()
@@ -321,6 +297,7 @@ class TestScalabilityLimits:
 
         # Test random access pattern
         import random
+
         indices = random.sample(range(10000), 100)
 
         start_time = time.time()
@@ -344,8 +321,8 @@ class TestFileLoadPerformance:
                 "data": {
                     "values": list(range(10)),
                     "enabled": True,
-                    "name": f"Section {i}"
-                }
+                    "name": f"Section {i}",
+                },
             }
             for i in range(100)
         }
@@ -424,10 +401,7 @@ class TestMemoryEfficiency:
 
         config_dict = {}
         for i in range(1000):
-            config_dict[f"item_{i}"] = {
-                "unique": i,
-                "shared": shared_data
-            }
+            config_dict[f"item_{i}"] = {"unique": i, "shared": shared_data}
 
         config = ConfigManager.from_dict(config_dict)
 
@@ -443,22 +417,14 @@ class TestMemoryEfficiency:
     def test_lazy_evaluation_performance(self):
         """Test that unused parts of config don't impact performance."""
         # Create large config with mostly unused sections
-        config_dict = {
-            "used": {
-                "value": "this will be accessed"
-            }
-        }
+        config_dict = {"used": {"value": "this will be accessed"}}
 
         # Add many unused sections
         for i in range(1000):
             config_dict[f"unused_{i}"] = {
                 "data": {
                     "large": "x" * 10000,  # 10KB each
-                    "nested": {
-                        "deep": {
-                            "value": i
-                        }
-                    }
+                    "nested": {"deep": {"value": i}},
                 }
             }
 

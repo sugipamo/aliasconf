@@ -308,7 +308,11 @@ class TestPath:
         add_edge(parent, child)
         add_edge(child, grandchild)
 
-        assert path(grandchild) == ["app.config", "database-settings", "connection_pool"]
+        assert path(grandchild) == [
+            "app.config",
+            "database-settings",
+            "connection_pool",
+        ]
 
 
 class TestFindNearestKeyNode:
@@ -357,5 +361,3 @@ class TestFindNearestKeyNode:
 
         result = find_nearest_key_node(parent, "py")
         assert result == child
-
-

@@ -33,11 +33,7 @@ def deep_merge_dicts(base: Dict[str, Any], overlay: Dict[str, Any]) -> Dict[str,
     result = base.copy()
 
     for key, value in overlay.items():
-        if (
-            key in result
-            and isinstance(result[key], dict)
-            and isinstance(value, dict)
-        ):
+        if key in result and isinstance(result[key], dict) and isinstance(value, dict):
             # Recursively merge nested dictionaries
             result[key] = deep_merge_dicts(result[key], value)
         else:
@@ -71,7 +67,7 @@ def normalize_path(path: Union[str, List[str], Tuple[str, ...]]) -> List[str]:
         if not path.strip():
             raise ConfigValidationError("Path cannot be empty string")
         # Check for empty components
-        parts = path.split('.')
+        parts = path.split(".")
         for i, part in enumerate(parts):
             if not part.strip():
                 if i == 0:
@@ -79,7 +75,9 @@ def normalize_path(path: Union[str, List[str], Tuple[str, ...]]) -> List[str]:
                 elif i == len(parts) - 1:
                     raise ConfigValidationError("Path cannot end with a dot")
                 else:
-                    raise ConfigValidationError("Path cannot contain empty components (double dots)")
+                    raise ConfigValidationError(
+                        "Path cannot contain empty components (double dots)"
+                    )
         # Split on dots and return stripped parts
         return [part.strip() for part in parts]
     elif isinstance(path, (list, tuple)):
@@ -89,14 +87,18 @@ def normalize_path(path: Union[str, List[str], Tuple[str, ...]]) -> List[str]:
         normalized = []
         for part in path:
             if not isinstance(part, (str, int)):
-                raise ConfigValidationError(f"Path parts must be strings or integers: {part}")
+                raise ConfigValidationError(
+                    f"Path parts must be strings or integers: {part}"
+                )
             str_part = str(part).strip()
             if not str_part:
                 raise ConfigValidationError("Path parts cannot be empty")
             normalized.append(str_part)
         return normalized
     else:
-        raise ConfigValidationError(f"Invalid path type: {type(path)}. Expected str, list, or tuple")
+        raise ConfigValidationError(
+            f"Invalid path type: {type(path)}. Expected str, list, or tuple"
+        )
 
 
 def validate_aliases(aliases: Any) -> List[str]:
@@ -127,7 +129,9 @@ def validate_aliases(aliases: Any) -> List[str]:
     validated = []
     for alias in aliases:
         if not isinstance(alias, str):
-            raise ConfigValidationError(f"Each alias must be a string, got {type(alias)}: {alias}")
+            raise ConfigValidationError(
+                f"Each alias must be a string, got {type(alias)}: {alias}"
+            )
 
         alias = alias.strip()
         if not alias:
@@ -155,6 +159,7 @@ def is_template_string(value: str) -> bool:
         >>> is_template_string("Hello world")   # False
     """
     import re
+
     pattern = re.compile(r"{(\w+)}")
     return bool(pattern.search(value))
 
@@ -284,7 +289,9 @@ def validate_config_structure(data: Any, allow_empty: bool = False) -> None:
         raise ConfigValidationError("Configuration data cannot be None")
 
     if not isinstance(data, dict):
-        raise ConfigValidationError(f"Configuration must be a dictionary, got {type(data)}")
+        raise ConfigValidationError(
+            f"Configuration must be a dictionary, got {type(data)}"
+        )
 
     if not allow_empty and not data:
         raise ConfigValidationError("Configuration cannot be empty")
@@ -296,7 +303,9 @@ def validate_config_structure(data: Any, allow_empty: bool = False) -> None:
             raise ConfigValidationError(f"Configuration key '{key}' is reserved")
 
         if not isinstance(key, str):
-            raise ConfigValidationError(f"Configuration keys must be strings, got {type(key)}: {key}")
+            raise ConfigValidationError(
+                f"Configuration keys must be strings, got {type(key)}: {key}"
+            )
 
         if not key.strip():
             raise ConfigValidationError("Configuration keys cannot be empty strings")
