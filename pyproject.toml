@@ -6,14 +6,14 @@ build-backend = "hatchling.build"
 name = "aliasconf"
 version = "0.1.0"
 authors = [
-    {name = "Author Name", email = "author@example.com"},
+    {name = "Sugipamo", email = "sugipamo@example.com"},
 ]
 description = "Configuration management with powerful alias support for multiple key access"
 readme = "README.md"
 license = {text = "MIT"}
 requires-python = ">=3.8"
 classifiers = [
-    "Development Status :: 3 - Alpha",
+    "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
@@ -54,10 +54,10 @@ docs = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/username/aliasconf"
-Documentation = "https://aliasconf.readthedocs.io/"
-Repository = "https://github.com/username/aliasconf"
-Issues = "https://github.com/username/aliasconf/issues"
+Homepage = "https://github.com/sugipamo/aliasconf"
+Documentation = "https://github.com/sugipamo/aliasconf#readme"
+Repository = "https://github.com/sugipamo/aliasconf"
+Issues = "https://github.com/sugipamo/aliasconf/issues"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/aliasconf"]
