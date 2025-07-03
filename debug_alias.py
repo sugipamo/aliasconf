@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 """Debug script to test alias resolution."""
 
-from src.aliasconf.core.manager import ConfigManager
 from src.aliasconf.core.resolver import create_config_root_from_dict, resolve_best
 
 config_dict = {

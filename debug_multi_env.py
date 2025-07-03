@@ -2,6 +2,7 @@
 """Debug script for multi-environment test case."""
 
 from src.aliasconf.core.manager import ConfigManager
+from src.aliasconf.core.resolver import create_config_root_from_dict
 
 base_config = {
     "features": {
@@ -46,7 +47,6 @@ except Exception as e:
     print(f"feature_flags.new_ui: ERROR - {e}")
 
 # Debug tree structure
-from src.aliasconf.core.resolver import create_config_root_from_dict
 
 root = create_config_root_from_dict(merged_dict)
 
@@ -58,3 +58,4 @@ def print_tree(node, level=0):
 
 print("\nTree structure:")
 print_tree(root)
+
