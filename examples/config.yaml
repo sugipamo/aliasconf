@@ -1,0 +1,139 @@
+# Example configuration file for AliasConf
+# Demonstrates various features including aliases, nested structures, and templates
+
+# Programming languages with aliases
+python:
+  aliases: ["py", "python3"]
+  timeout: 30
+  command: "python {script}"
+  version: "3.11"
+  packages:
+    - "requests"
+    - "pyyaml"
+    - "pytest"
+
+cpp:
+  aliases: ["c++", "cxx", "cplusplus"]
+  timeout: 60
+  command: "g++ {source} -o {output} -std={std}"
+  std: "c++17"
+  flags:
+    - "-Wall"
+    - "-Wextra"
+    - "-O2"
+
+javascript:
+  aliases: ["js", "node"]
+  timeout: 45
+  command: "node {script}"
+  version: "18"
+  runtime: "node"
+
+# Database configuration
+database:
+  primary:
+    host: "localhost"
+    port: 5432
+    name: "myapp"
+    url: "postgresql://{host}:{port}/{name}"
+    
+  redis:
+    aliases: ["cache", "session_store"]
+    host: "localhost"
+    port: 6379
+    db: 0
+    url: "redis://{host}:{port}/{db}"
+
+# Application settings
+app:
+  name: "My Application"
+  version: "1.0.0"
+  debug: false
+  log_level: "INFO"
+  
+  # Server configuration
+  server:
+    aliases: ["web", "frontend"]
+    host: "0.0.0.0"
+    port: 8080
+    workers: 4
+    url: "http://{host}:{port}"
+    
+  # API configuration  
+  api:
+    aliases: ["backend", "rest"]
+    host: "127.0.0.1"
+    port: 3000
+    prefix: "/api/v1"
+    base_url: "http://{host}:{port}{prefix}"
+    
+    rate_limit:
+      enabled: true
+      requests_per_minute: 100
+      burst_size: 20
+
+# Security settings
+security:
+  ssl:
+    enabled: true
+    cert_path: "/etc/ssl/certs/app.crt"
+    key_path: "/etc/ssl/private/app.key"
+    
+  jwt:
+    aliases: ["token", "auth"]
+    secret_key: "your-secret-key-here"
+    algorithm: "HS256"
+    expiration_hours: 24
+
+# Feature flags
+features:
+  experimental:
+    aliases: ["exp", "beta"]
+    new_ui: false
+    advanced_search: true
+    real_time_updates: false
+    
+  stable:
+    user_registration: true
+    email_notifications: true
+    file_uploads: true
+
+# Environment-specific settings
+environments:
+  development:
+    aliases: ["dev", "local"]
+    debug: true
+    log_level: "DEBUG"
+    hot_reload: true
+    
+  production:
+    aliases: ["prod", "live"]
+    debug: false
+    log_level: "WARNING"
+    compression: true
+    
+  testing:
+    aliases: ["test", "ci"]
+    debug: false
+    log_level: "ERROR"
+    mock_external_apis: true
+
+# Paths and directories
+paths:
+  data: "/var/data/myapp"
+  logs: "/var/log/myapp"
+  uploads: "/var/uploads"
+  temp: "/tmp/myapp"
+  
+  templates:
+    aliases: ["views", "html"]
+    base: "/app/templates"
+    email: "{base}/email"
+    web: "{base}/web"
+    
+  static:
+    aliases: ["assets", "public"]
+    base: "/app/static"
+    css: "{base}/css"
+    js: "{base}/js"
+    images: "{base}/images"
