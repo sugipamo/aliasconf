@@ -12,6 +12,7 @@ class AliasConfError(Exception):
     All custom exceptions in AliasConf inherit from this base class,
     making it easy to catch any AliasConf-related error.
     """
+
     pass
 
 
@@ -24,6 +25,7 @@ class ConfigNodeError(AliasConfError):
     - Node traversal operations
     - Alias matching operations
     """
+
     pass
 
 
@@ -36,6 +38,7 @@ class ConfigResolverError(AliasConfError):
     - Configuration value retrieval
     - BFS search operations
     """
+
     pass
 
 
@@ -48,4 +51,5 @@ class ConfigValidationError(AliasConfError):
     - Required value validation
     - Configuration constraint violations
     """
+
     pass
