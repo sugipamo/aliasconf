@@ -9,16 +9,11 @@ base_config = {
         "aliases": ["feature_flags", "flags"],
         "new_ui": False,
         "beta_features": False,
-        "analytics": True
+        "analytics": True,
     }
 }
 
-staging_config = {
-    "features": {
-        "new_ui": True,
-        "beta_features": False
-    }
-}
+staging_config = {"features": {"new_ui": True, "beta_features": False}}
 
 # Merge configs
 merged_dict = {}
@@ -50,12 +45,13 @@ except Exception as e:
 
 root = create_config_root_from_dict(merged_dict)
 
+
 def print_tree(node, level=0):
     indent = "  " * level
     print(f"{indent}{node.key}: {node.value} (matches: {node.matches})")
     for child in node.next_nodes:
         print_tree(child, level + 1)
 
+
 print("\nTree structure:")
 print_tree(root)
-

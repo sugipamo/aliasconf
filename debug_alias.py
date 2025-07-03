@@ -7,12 +7,13 @@ config_dict = {
     "python": {
         "aliases": ["py", "python3"],
         "timeout": 30,
-        "command": "python script.py"
+        "command": "python script.py",
     }
 }
 
 # Create config tree
 root = create_config_root_from_dict(config_dict)
+
 
 # Debug: Print tree structure
 def print_tree(node, level=0):
@@ -20,6 +21,7 @@ def print_tree(node, level=0):
     print(f"{indent}{node.key}: {node.value} (matches: {node.matches})")
     for child in node.next_nodes:
         print_tree(child, level + 1)
+
 
 print("Tree structure:")
 print_tree(root)
@@ -30,7 +32,7 @@ print("Testing alias resolution:")
 paths_to_test = [
     ["python", "timeout"],
     ["py", "timeout"],
-    ["python3", "timeout"]
+    ["python3", "timeout"],
 ]
 
 for path in paths_to_test:
