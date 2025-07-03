@@ -144,10 +144,10 @@ class ConfigManager:
             raise AliasConfError(f"Configuration file not found: {file_path}")
 
         try:
-            with open(path, encoding='utf-8') as f:
-                if path.suffix.lower() in ['.yml', '.yaml']:
+            with open(path, encoding="utf-8") as f:
+                if path.suffix.lower() in [".yml", ".yaml"]:
                     data = yaml.safe_load(f)
-                elif path.suffix.lower() == '.json':
+                elif path.suffix.lower() == ".json":
                     data = json.load(f)
                 else:
                     raise AliasConfError(f"Unsupported file format: {path.suffix}")
@@ -195,9 +195,9 @@ class ConfigManager:
 
             try:
                 with open(path) as f:
-                    if path.suffix in ['.yaml', '.yml']:
+                    if path.suffix in [".yaml", ".yml"]:
                         data = yaml.safe_load(f)
-                    elif path.suffix == '.json':
+                    elif path.suffix == ".json":
                         data = json.load(f)
                     else:
                         raise AliasConfError(f"Unsupported file format: {path.suffix}")
@@ -445,9 +445,9 @@ class ConfigManager:
             if isinstance(value, bool):
                 return cast(T, value)
             elif isinstance(value, str):
-                if value.lower() in ('true', '1', 'yes', 'on'):
+                if value.lower() in ("true", "1", "yes", "on"):
                     return cast(T, True)
-                elif value.lower() in ('false', '0', 'no', 'off'):
+                elif value.lower() in ("false", "0", "no", "off"):
                     return cast(T, False)
                 else:
                     raise ConfigValidationError(f"Cannot convert string '{value}' to bool")

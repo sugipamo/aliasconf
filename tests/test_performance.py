@@ -56,9 +56,11 @@ class TestPerformanceBenchmarks:
             for j in range(10):
                 config_dict[f"category_{i}"][f"subcategory_{j}"] = {}
                 for k in range(10):
-                    config_dict[f"category_{i}"][f"subcategory_{j}"][f"item_{k}"] = {
+                    config_dict[f"category_{i}"][f"subcategory_{j}"][
+                        f"item_{k}"
+                    ] = {
                         "aliases": [f"alias_{i}_{j}_{k}"],
-                        "value": f"value_{i}_{j}_{k}"
+                        "value": f"value_{i}_{j}_{k}",
                     }
 
         start_time = time.time()
@@ -353,11 +355,11 @@ class TestFileLoadPerformance:
             json_path = Path(tmpdir) / "config.json"
 
             # Write YAML file
-            with open(yaml_path, 'w') as f:
+            with open(yaml_path, "w") as f:
                 yaml.dump(config_dict, f)
 
             # Write JSON file
-            with open(json_path, 'w') as f:
+            with open(json_path, "w") as f:
                 json.dump(config_dict, f)
 
             # Time YAML loading
@@ -389,13 +391,13 @@ class TestFileLoadPerformance:
                     f"file_{i}": {
                         "data": {
                             "value": i,
-                            "items": list(range(100))
+                            "items": list(range(100)),
                         }
                     }
                 }
 
                 file_path = Path(tmpdir) / f"config_{i}.yaml"
-                with open(file_path, 'w') as f:
+                with open(file_path, "w") as f:
                     yaml.dump(config_dict, f)
                 file_paths.append(file_path)
 

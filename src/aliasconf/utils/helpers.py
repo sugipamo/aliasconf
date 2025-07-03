@@ -33,9 +33,11 @@ def deep_merge_dicts(base: Dict[str, Any], overlay: Dict[str, Any]) -> Dict[str,
     result = base.copy()
 
     for key, value in overlay.items():
-        if (key in result and
-            isinstance(result[key], dict) and
-            isinstance(value, dict)):
+        if (
+            key in result
+            and isinstance(result[key], dict)
+            and isinstance(value, dict)
+        ):
             # Recursively merge nested dictionaries
             result[key] = deep_merge_dicts(result[key], value)
         else:
@@ -153,14 +155,14 @@ def is_template_string(value: str) -> bool:
         >>> is_template_string("Hello world")   # False
     """
     import re
-    pattern = re.compile(r'{(\w+)}')
+    pattern = re.compile(r"{(\w+)}")
     return bool(pattern.search(value))
 
 
 def flatten_dict(
     data: Dict[str, Any],
-    parent_key: str = '',
-    separator: str = '.'
+    parent_key: str = "",
+    separator: str = ".",
 ) -> Dict[str, Any]:
     """Flatten a nested dictionary structure.
 
@@ -194,7 +196,7 @@ def flatten_dict(
 
 def unflatten_dict(
     data: Dict[str, Any],
-    separator: str = '.'
+    separator: str = ".",
 ) -> Dict[str, Any]:
     """Unflatten a dictionary with compound keys.
 
@@ -231,7 +233,7 @@ def unflatten_dict(
 def safe_get_nested(
     data: Dict[str, Any],
     path: Union[str, List[str]],
-    default: Any = None
+    default: Any = None,
 ) -> Any:
     """Safely get a value from nested dictionary structure.
 
@@ -288,7 +290,7 @@ def validate_config_structure(data: Any, allow_empty: bool = False) -> None:
         raise ConfigValidationError("Configuration cannot be empty")
 
     # Check for reserved keys that might conflict with internal operations
-    reserved_keys = {'__aliasconf_internal__', '__meta__'}
+    reserved_keys = {"__aliasconf_internal__", "__meta__"}
     for key in data:
         if key in reserved_keys:
             raise ConfigValidationError(f"Configuration key '{key}' is reserved")

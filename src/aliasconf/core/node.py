@@ -69,7 +69,7 @@ class ConfigNode:
             f")"
         )
 
-    def add_edge(self, to_node: 'ConfigNode') -> None:
+    def add_edge(self, to_node: "ConfigNode") -> None:
         """Add a child node to this node.
 
         Args:

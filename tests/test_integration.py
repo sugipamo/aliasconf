@@ -62,11 +62,11 @@ class TestMultiFileIntegration:
             dev_path = Path(tmpdir) / "dev.yaml"
             prod_path = Path(tmpdir) / "prod.yaml"
 
-            with open(base_path, 'w') as f:
+            with open(base_path, "w") as f:
                 yaml.dump(base_config, f)
-            with open(dev_path, 'w') as f:
+            with open(dev_path, "w") as f:
                 yaml.dump(dev_config, f)
-            with open(prod_path, 'w') as f:
+            with open(prod_path, "w") as f:
                 yaml.dump(prod_config, f)
 
             # Test development configuration
@@ -138,11 +138,11 @@ class TestMultiFileIntegration:
             db_path = Path(tmpdir) / "database.yaml"
             services_path = Path(tmpdir) / "services.yaml"
 
-            with open(app_path, 'w') as f:
+            with open(app_path, "w") as f:
                 yaml.dump(app_config, f)
-            with open(db_path, 'w') as f:
+            with open(db_path, "w") as f:
                 yaml.dump(db_config, f)
-            with open(services_path, 'w') as f:
+            with open(services_path, "w") as f:
                 yaml.dump(services_config, f)
 
             # Load all configurations
@@ -195,11 +195,11 @@ class TestMultiFileIntegration:
             service_a_path = Path(tmpdir) / "service_a.yaml"
             service_b_path = Path(tmpdir) / "service_b.yaml"
 
-            with open(common_path, 'w') as f:
+            with open(common_path, "w") as f:
                 yaml.dump(common_config, f)
-            with open(service_a_path, 'w') as f:
+            with open(service_a_path, "w") as f:
                 yaml.dump(service_a_config, f)
-            with open(service_b_path, 'w') as f:
+            with open(service_b_path, "w") as f:
                 yaml.dump(service_b_config, f)
 
             # Load all configurations

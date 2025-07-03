@@ -10,7 +10,9 @@ from functools import lru_cache
 from typing import Any, Dict, List, Tuple
 
 
-def format_with_missing_keys(template: str, **kwargs: Any) -> Tuple[str, List[str]]:
+def format_with_missing_keys(
+    template: str, **kwargs: Any
+) -> Tuple[str, List[str]]:
     """Format template with partial data, returning missing keys.
 
     This function formats a template string with the provided keyword arguments,
@@ -40,7 +42,7 @@ def format_with_missing_keys(template: str, **kwargs: Any) -> Tuple[str, List[st
     for key in keys:
         if key in kwargs:
             # Simple replacement for keys that are directly in kwargs
-            formatted = formatted.replace('{' + key + '}', str(kwargs[key]))
+            formatted = formatted.replace("{" + key + "}", str(kwargs[key]))
         else:
             missing.append(key)
 
@@ -64,7 +66,7 @@ def extract_format_keys(template: str) -> List[str]:
         >>> keys = extract_format_keys("Hello {name}, your {type} is {value}")
         >>> print(keys)  # ["name", "type", "value"]
     """
-    pattern = re.compile(r'{([\w.]+)}')
+    pattern = re.compile(r"{([\w.]+)}")
     return pattern.findall(template)
 
 
@@ -119,7 +121,9 @@ def validate_template_syntax(template: str) -> Tuple[bool, str]:
     return True, ""
 
 
-def recursive_format(template: str, context: Dict[str, Any], max_iterations: int = 5) -> str:
+def recursive_format(
+    template: str, context: Dict[str, Any], max_iterations: int = 5
+) -> str:
     """Recursively format a template until no more substitutions are possible.
 
     This function repeatedly applies formatting to handle cases where template

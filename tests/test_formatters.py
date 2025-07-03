@@ -31,7 +31,7 @@ class TestFormatWithMissingKeys:
             template,
             greeting="Hello",
             name="Bob",
-            age=25
+            age=25,
         )
 
         assert result == "Hello Bob, you are 25 years old"
@@ -74,7 +74,7 @@ class TestFormatWithMissingKeys:
         result, missing = format_with_missing_keys(
             template,
             name="Alice",
-            place="park"
+            place="park",
         )
 
         assert result == "Alice meets Alice at park"
@@ -86,7 +86,7 @@ class TestFormatWithMissingKeys:
         result, missing = format_with_missing_keys(
             template,
             count=42,
-            pi=3.14159
+            pi=3.14159,
         )
 
         assert result == "Count: 42, Pi: 3.14159"
@@ -97,7 +97,7 @@ class TestFormatWithMissingKeys:
         template = "Path: {path}"
         result, missing = format_with_missing_keys(
             template,
-            path="/usr/local/bin"
+            path="/usr/local/bin",
         )
 
         assert result == "Path: /usr/local/bin"

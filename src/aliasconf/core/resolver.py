@@ -144,7 +144,9 @@ def create_config_root_from_dict(data: Any) -> ConfigNode:
     return root
 
 
-def resolve_by_match_desc(root: ConfigNode, path: Union[List[str], Tuple[str, ...]]) -> List[ConfigNode]:
+def resolve_by_match_desc(
+    root: ConfigNode, path: Union[List[str], Tuple[str, ...]]
+) -> List[ConfigNode]:
     """Resolve nodes by matching path with descending priority.
 
     Uses a sophisticated matching algorithm that assigns priority scores
@@ -165,7 +167,9 @@ def resolve_by_match_desc(root: ConfigNode, path: Union[List[str], Tuple[str, ..
     return _resolve_by_match_desc(root, tuple(path))
 
 
-def resolve_best(root: ConfigNode, path: Union[List[str], Tuple[str, ...]]) -> Optional[ConfigNode]:
+def resolve_best(
+    root: ConfigNode, path: Union[List[str], Tuple[str, ...]]
+) -> Optional[ConfigNode]:
     """Resolve the best matching config node for given path.
 
     Returns the single best matching node for the given path, or None if
@@ -189,7 +193,9 @@ def resolve_best(root: ConfigNode, path: Union[List[str], Tuple[str, ...]]) -> O
     return results[0] if results else None
 
 
-def resolve_values(root: ConfigNode, path: Union[List[str], Tuple[str, ...]]) -> List[Any]:
+def resolve_values(
+    root: ConfigNode, path: Union[List[str], Tuple[str, ...]]
+) -> List[Any]:
     """Resolve values for all nodes matching the given path.
 
     Args:
@@ -205,7 +211,7 @@ def resolve_values(root: ConfigNode, path: Union[List[str], Tuple[str, ...]]) ->
 def resolve_formatted_string(
     template: str,
     root: ConfigNode,
-    initial_values: Optional[Dict[str, Any]] = None
+    initial_values: Optional[Dict[str, Any]] = None,
 ) -> str:
     """Format a template string using values from the configuration tree.
 
@@ -287,7 +293,9 @@ def resolve_formatted_string(
         return result
 
 
-def resolve_format_string(node: ConfigNode, initial_values: Optional[Dict[str, Any]] = None) -> str:
+def resolve_format_string(
+    node: ConfigNode, initial_values: Optional[Dict[str, Any]] = None
+) -> str:
     """Format a string value from a specific node using configuration tree context.
 
     Extracts a string value from the node and formats it using values available
@@ -354,7 +362,9 @@ def resolve_format_string(node: ConfigNode, initial_values: Optional[Dict[str, A
     return formatted
 
 
-def _resolve_by_match_desc(root: ConfigNode, path: Tuple[str, ...]) -> List[ConfigNode]:
+def _resolve_by_match_desc(
+    root: ConfigNode, path: Tuple[str, ...]
+) -> List[ConfigNode]:
     """Internal function for resolving nodes by descending match priority.
 
     Implements a sophisticated matching algorithm that uses bit-shifting to

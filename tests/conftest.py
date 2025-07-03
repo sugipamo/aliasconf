@@ -16,7 +16,9 @@ from aliasconf import ConfigManager
 
 
 # Test data generators
-def generate_nested_config(depth: int = 3, width: int = 3) -> Dict[str, Any]:
+def generate_nested_config(
+    depth: int = 3, width: int = 3
+) -> Dict[str, Any]:
     """
     Generate a nested configuration structure for testing.
 
@@ -29,17 +31,14 @@ def generate_nested_config(depth: int = 3, width: int = 3) -> Dict[str, Any]:
     """
     def _generate_level(current_depth: int) -> Dict[str, Any]:
         if current_depth <= 0:
-            return {
-                f"leaf_{i}": f"value_{i}"
-                for i in range(width)
-            }
+            return {f"leaf_{i}": f"value_{i}" for i in range(width)}
 
         result = {}
         for i in range(width):
             if i == 0:  # Add aliases to first item
                 result[f"node_{i}"] = {
                     "aliases": [f"n{i}", f"alias_{i}"],
-                    **_generate_level(current_depth - 1)
+                    **_generate_level(current_depth - 1),
                 }
             else:
                 result[f"node_{i}"] = _generate_level(current_depth - 1)
@@ -64,7 +63,7 @@ def generate_flat_config(num_keys: int = 100) -> Dict[str, Any]:
             "aliases": [f"k{i}", f"alias_{i}"] if i % 10 == 0 else [],
             "value": i,
             "name": f"Item {i}",
-            "enabled": i % 2 == 0
+            "enabled": i % 2 == 0,
         }
         for i in range(num_keys)
     }
@@ -166,7 +165,7 @@ def temp_config_dir():
 def yaml_config_file(temp_config_dir, simple_config):
     """Create a temporary YAML config file."""
     file_path = temp_config_dir / "config.yaml"
-    with open(file_path, 'w') as f:
+    with open(file_path, "w") as f:
         yaml.dump(simple_config, f)
     return file_path
 
@@ -175,7 +174,7 @@ def yaml_config_file(temp_config_dir, simple_config):
 def json_config_file(temp_config_dir, simple_config):
     """Create a temporary JSON config file."""
     file_path = temp_config_dir / "config.json"
-    with open(file_path, 'w') as f:
+    with open(file_path, "w") as f:
         json.dump(simple_config, f)
     return file_path
 
@@ -204,10 +203,10 @@ def multi_config_files(temp_config_dir):
     base_path = temp_config_dir / "base.yaml"
     override_path = temp_config_dir / "override.yaml"
 
-    with open(base_path, 'w') as f:
+    with open(base_path, "w") as f:
         yaml.dump(base_config, f)
 
-    with open(override_path, 'w') as f:
+    with open(override_path, "w") as f:
         yaml.dump(override_config, f)
 
     return base_path, override_path
@@ -334,7 +333,9 @@ PATH_FORMAT_TEST_CASES = [
 
 
 # Utility functions for tests
-def assert_config_equal(config1: Dict[str, Any], config2: Dict[str, Any]):
+def assert_config_equal(
+    config1: Dict[str, Any], config2: Dict[str, Any]
+) -> None:
     """Assert two configurations are equal (ignoring aliases)."""
     def remove_aliases(d):
         if isinstance(d, dict):
@@ -353,7 +354,9 @@ def assert_config_equal(config1: Dict[str, Any], config2: Dict[str, Any]):
     assert clean1 == clean2
 
 
-def create_test_config_files(directory: Path, configs: Dict[str, Dict[str, Any]]) -> List[Path]:
+def create_test_config_files(
+    directory: Path, configs: Dict[str, Dict[str, Any]]
+) -> List[Path]:
     """
     Create multiple test configuration files in a directory.
 
@@ -366,13 +369,13 @@ def create_test_config_files(directory: Path, configs: Dict[str, Dict[str, Any]]
     """
     paths = []
     for filename, config in configs.items():
-        if filename.endswith('.json'):
+        if filename.endswith(".json"):
             file_path = directory / filename
-            with open(file_path, 'w') as f:
+            with open(file_path, "w") as f:
                 json.dump(config, f)
         else:  # Default to YAML
             file_path = directory / f"{filename}.yaml"
-            with open(file_path, 'w') as f:
+            with open(file_path, "w") as f:
                 yaml.dump(config, f)
         paths.append(file_path)
 

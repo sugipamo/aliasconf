@@ -17,7 +17,7 @@ _global_cache = ConfigCache()
 def _resolve_by_match_desc_optimized(
     root: ConfigNode,
     path: Tuple[str, ...],
-    cache: Optional[ConfigCache] = None
+    cache: Optional[ConfigCache] = None,
 ) -> List[ConfigNode]:
     """Optimized internal function for resolving nodes.
 
@@ -58,7 +58,9 @@ def _resolve_by_match_desc_optimized(
                 results.append((1 << len(path), node))
             else:
                 # Try to resolve remaining path from this node
-                child_results = _resolve_children_fast(node, remaining, len(path) - i)
+                child_results = _resolve_children_fast(
+                    node, remaining, len(path) - i
+                )
                 results.extend(child_results)
 
     # Check aliases for the first component
@@ -85,7 +87,7 @@ def _resolve_by_match_desc_optimized(
 def _resolve_children_fast(
     parent: ConfigNode,
     remaining_path: Tuple[str, ...],
-    base_priority: int
+    base_priority: int,
 ) -> List[Tuple[int, ConfigNode]]:
     """Fast resolution of remaining path from a parent node.
 
@@ -126,7 +128,7 @@ def _resolve_children_fast(
 def resolve_best_optimized(
     root: ConfigNode,
     path: List[str],
-    cache: Optional[ConfigCache] = None
+    cache: Optional[ConfigCache] = None,
 ) -> Optional[ConfigNode]:
     """Optimized version of resolve_best using caching.
 
