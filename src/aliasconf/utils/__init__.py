@@ -6,11 +6,7 @@ throughout the AliasConf library.
 """
 
 from .formatters import format_with_missing_keys
-from .helpers import (
-    deep_merge_dicts,
-    normalize_path,
-    validate_aliases,
-)
+from .helpers import deep_merge_dicts, normalize_path, validate_aliases
 
 __all__ = [
     "format_with_missing_keys",

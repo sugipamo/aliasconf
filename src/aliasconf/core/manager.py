@@ -28,17 +28,10 @@ from ..exceptions.errors import (
     ConfigResolverError,
     ConfigValidationError,
 )
-from ..utils.helpers import (
-    deep_merge_dicts,
-    normalize_path,
-    validate_config_structure,
-)
+from ..utils.helpers import deep_merge_dicts, normalize_path, validate_config_structure
 from .cache import ConfigCache
 from .node import ConfigNode
-from .optimized_resolver import (
-    clear_global_cache,
-    resolve_best_optimized,
-)
+from .optimized_resolver import clear_global_cache, resolve_best_optimized
 from .resolver import (
     create_config_root_from_dict,
     resolve_best,

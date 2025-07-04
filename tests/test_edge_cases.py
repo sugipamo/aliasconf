@@ -10,10 +10,7 @@ import sys
 import pytest
 
 from aliasconf import ConfigManager
-from aliasconf.exceptions import (
-    ConfigResolverError,
-    ConfigValidationError,
-)
+from aliasconf.exceptions import ConfigResolverError, ConfigValidationError
 
 
 class TestAliasEdgeCases:

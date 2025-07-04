@@ -7,10 +7,7 @@ Tests core features like alias resolution, type conversion, and basic configurat
 import pytest
 
 from aliasconf import ConfigManager
-from aliasconf.exceptions import (
-    ConfigResolverError,
-    ConfigValidationError,
-)
+from aliasconf.exceptions import ConfigResolverError, ConfigValidationError
 
 
 class TestBasicFunctionality:
