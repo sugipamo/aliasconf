@@ -28,6 +28,7 @@ from ..exceptions.errors import (
     ConfigResolverError,
     ConfigValidationError,
 )
+from ..loaders.env_loader import EnvLoader
 from ..utils.helpers import deep_merge_dicts, normalize_path, validate_config_structure
 from .cache import ConfigCache
 from .node import ConfigNode
@@ -494,6 +495,147 @@ class ConfigManager:
         self._cache.clear()
         self._config_cache.clear()
         clear_global_cache()
+
+    def set(self, path: Union[str, List[str]], value: Any) -> None:
+        """Set a value at the specified path.
+
+        Args:
+            path: The path to set the value at (e.g. "database.host")
+            value: The value to set
+
+        Raises:
+            ConfigValidationError: If the path is invalid
+        """
+        if self._root is None:
+            self._root = ConfigNode()
+
+        # Normalize path
+        if isinstance(path, str):
+            path_parts = normalize_path(path)
+        else:
+            path_parts = path
+
+        # Navigate to parent node
+        current = self._root
+        for i, part in enumerate(path_parts[:-1]):
+            if part not in current.children:
+                current.children[part] = ConfigNode()
+            current = current.children[part]
+
+        # Set the value
+        last_part = path_parts[-1]
+        if last_part not in current.children:
+            current.children[last_part] = ConfigNode()
+        current.children[last_part].value = value
+
+        # Clear cache
+        self.clear_cache()
+
+    def add_alias(self, alias_path: Union[str, List[str]], target_path: Union[str, List[str]]) -> None:
+        """Add an alias for a configuration path.
+
+        Args:
+            alias_path: The alias path
+            target_path: The target path that the alias points to
+
+        Raises:
+            ConfigValidationError: If either path is invalid
+        """
+        if self._root is None:
+            self._root = ConfigNode()
+
+        # Normalize paths
+        if isinstance(alias_path, str):
+            alias_parts = normalize_path(alias_path)
+        else:
+            alias_parts = alias_path
+
+        if isinstance(target_path, str):
+            target_parts = normalize_path(target_path)
+        else:
+            target_parts = target_path
+
+        # Navigate to target node to ensure it exists
+        target_node = self._root
+        for part in target_parts:
+            if part not in target_node.children:
+                target_node.children[part] = ConfigNode()
+            target_node = target_node.children[part]
+
+        # Create alias path
+        current = self._root
+        for i, part in enumerate(alias_parts[:-1]):
+            if part not in current.children:
+                current.children[part] = ConfigNode()
+            current = current.children[part]
+
+        # Set the alias
+        last_part = alias_parts[-1]
+        if last_part not in current.aliases:
+            current.aliases[last_part] = target_parts
+
+        # Clear cache
+        self.clear_cache()
+
+    def load_from_env(
+        self,
+        prefix: str = "ALIASCONF_",
+        delimiter: str = "_",
+        merge_strategy: str = "replace",
+        skip_errors: bool = False,
+        converter: Optional[Any] = None,
+        use_aliases: bool = False
+    ) -> "ConfigManager":
+        """Load configuration from environment variables.
+
+        Args:
+            prefix: Prefix for environment variables (default: "ALIASCONF_")
+            delimiter: Delimiter for nested keys (default: "_")
+            merge_strategy: Strategy for merging with existing config ("replace" or "override")
+            skip_errors: Whether to skip errors during parsing
+            converter: Custom converter function for values
+            use_aliases: Whether to resolve aliases when setting values
+
+        Returns:
+            Self for method chaining
+        """
+        # Create EnvLoader instance
+        env_loader = EnvLoader(prefix=prefix, delimiter=delimiter, convert_types=converter is None)
+
+        # Load environment variables
+        env_data = env_loader.load()
+
+        # If custom converter provided, apply it
+        if converter:
+            def apply_converter(data: Dict[str, Any], path: str = "") -> Dict[str, Any]:
+                result = {}
+                for key, value in data.items():
+                    current_path = f"{path}.{key}" if path else key
+                    if isinstance(value, dict):
+                        result[key] = apply_converter(value, current_path)
+                    else:
+                        result[key] = converter(current_path, value)
+                return result
+            env_data = apply_converter(env_data)
+
+        # Merge with existing configuration
+        if self._root is None:
+            self._root = create_config_root_from_dict(env_data)
+        else:
+            if merge_strategy == "override":
+                # Override strategy: completely replace values
+                for key, value in env_data.items():
+                    self.set(key, value)
+            else:
+                # Replace strategy: merge with existing
+                current_data = self.to_dict(include_aliases=False)
+                merged_data = deep_merge_dicts(current_data, env_data)
+                self._root = create_config_root_from_dict(merged_data)
+
+        # Clear cache after loading
+        self.clear_cache()
+
+        return self
 
     def __repr__(self) -> str:
         """Return string representation of ConfigManager."""
