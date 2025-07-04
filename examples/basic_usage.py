@@ -21,19 +21,15 @@ def main():
             "aliases": ["py", "python3"],
             "timeout": 30,
             "command": "python {script}",
-            "version": "3.11"
+            "version": "3.11",
         },
         "cpp": {
             "aliases": ["c++", "cxx"],
             "timeout": 60,
             "command": "g++ {source} -o {output}",
-            "std": "c++17"
+            "std": "c++17",
         },
-        "database": {
-            "host": "localhost",
-            "port": 5432,
-            "name": "myapp"
-        }
+        "database": {"host": "localhost", "port": 5432, "name": "myapp"},
     }
 
     config = ConfigManager.from_dict(config_dict)
@@ -61,10 +57,9 @@ def main():
     print(f"Python command: {python_cmd}")
 
     # Format C++ command
-    cpp_cmd = config.get_formatted("cpp.command", {
-        "source": "main.cpp",
-        "output": "main"
-    })
+    cpp_cmd = config.get_formatted(
+        "cpp.command", {"source": "main.cpp", "output": "main"}
+    )
     print(f"C++ command: {cpp_cmd}")
     print()
 
@@ -95,7 +90,7 @@ def main():
         "py.timeout",
         "database.host",
         "nonexistent.path",
-        "app.name"
+        "app.name",
     ]
 
     for path in paths_to_check:
@@ -116,18 +111,15 @@ def main():
                 "ssl": {
                     "enabled": True,
                     "cert_path": "/etc/ssl/cert.pem",
-                    "key_path": "/etc/ssl/key.pem"
-                }
+                    "key_path": "/etc/ssl/key.pem",
+                },
             },
             "api": {
                 "aliases": ["backend", "server"],
                 "host": "127.0.0.1",
                 "port": 3000,
-                "rate_limit": {
-                    "enabled": True,
-                    "requests_per_minute": 100
-                }
-            }
+                "rate_limit": {"enabled": True, "requests_per_minute": 100},
+            },
         }
     }
 
@@ -150,28 +142,19 @@ def main():
     print("📝 Example 6: Configuration Merging")
     print("-" * 50)
 
-    base_config = ConfigManager.from_dict({
-        "app": {
-            "name": "MyApp",
-            "version": "1.0.0",
-            "debug": False
-        },
-        "database": {
-            "host": "localhost",
-            "port": 5432
+    base_config = ConfigManager.from_dict(
+        {
+            "app": {"name": "MyApp", "version": "1.0.0", "debug": False},
+            "database": {"host": "localhost", "port": 5432},
         }
-    })
+    )
 
-    dev_config = ConfigManager.from_dict({
-        "app": {
-            "debug": True,
-            "log_level": "DEBUG"
-        },
-        "database": {
-            "host": "dev-db-server",
-            "ssl": True
+    dev_config = ConfigManager.from_dict(
+        {
+            "app": {"debug": True, "log_level": "DEBUG"},
+            "database": {"host": "dev-db-server", "ssl": True},
         }
-    })
+    )
 
     merged = base_config.merge(dev_config)
 

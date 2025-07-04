@@ -36,7 +36,7 @@ print("Testing access patterns:")
 print(f"features.new_ui: {config.get('features.new_ui', bool)}")
 
 try:
-    result = config.get('feature_flags.new_ui', bool)
+    result = config.get("feature_flags.new_ui", bool)
     print(f"feature_flags.new_ui: {result}")
 except Exception as e:
     print(f"feature_flags.new_ui: ERROR - {e}")

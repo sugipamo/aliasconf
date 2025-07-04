@@ -45,6 +45,7 @@ dev = [
     "isort>=5.0",
     "mypy>=1.0",
     "ruff>=0.1.0",
+    "types-pyyaml>=6.0.12",
 ]
 docs = [
     "mkdocs>=1.4",

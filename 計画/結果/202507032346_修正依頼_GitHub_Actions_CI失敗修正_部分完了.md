@@ -1,4 +1,8 @@
-# GitHub Actions CI失敗修正計画
+# GitHub Actions CI失敗修正計画 【部分完了】
+
+**ステータス**: 部分完了（2025年7月4日）
+- ✅ types-pyyaml追加完了
+- ⚠️ isortチェック未実施（環境制約）
 
 ## 概要
 GitHub ActionsのTest Suiteワークフローがすべてのコミットで失敗している状態です。
