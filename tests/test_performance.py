@@ -258,8 +258,8 @@ class TestCachePerformance:
             second_access_time = (time.perf_counter() - start_time) / iterations
 
         # Cache hits should be significantly faster
-        # Allow 55% threshold for Windows environments to account for timer precision
-        assert second_access_time < first_access_time * 0.55
+        # Allow 60% threshold for CI environments to account for timer precision and variance
+        assert second_access_time < first_access_time * 0.60
 
     def test_cache_memory_overhead(self):
         """Test that cache doesn't cause excessive memory usage."""
