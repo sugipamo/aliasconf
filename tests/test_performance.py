@@ -205,6 +205,8 @@ class TestCachePerformance:
 
     def test_cache_hit_performance(self):
         """Test performance improvement from cache hits."""
+        import platform
+
         config_dict = {
             f"item_{i}": {"value": f"value_{i}", "number": i} for i in range(100)
         }
@@ -212,16 +214,26 @@ class TestCachePerformance:
         config = ConfigManager.from_dict(config_dict)
 
         # First access (cache miss)
-        start_time = time.time()
+        start_time = time.perf_counter()
         for i in range(100):
             config.get(f"item_{i}.value", str)
-        first_access_time = time.time() - start_time
+        first_access_time = time.perf_counter() - start_time
 
         # Second access (cache hit)
-        start_time = time.time()
+        start_time = time.perf_counter()
         for i in range(100):
             config.get(f"item_{i}.value", str)
-        second_access_time = time.time() - start_time
+        second_access_time = time.perf_counter() - start_time
+
+        # Handle Windows timer precision issues
+        if platform.system() == "Windows" and second_access_time == 0.0:
+            # Run multiple iterations to get measurable time
+            iterations = 1000
+            start_time = time.perf_counter()
+            for _ in range(iterations):
+                for i in range(100):
+                    config.get(f"item_{i}.value", str)
+            second_access_time = (time.perf_counter() - start_time) / iterations
 
         # Cache hits should be significantly faster
         assert second_access_time < first_access_time * 0.5
