@@ -100,7 +100,10 @@ class TestBasicFunctionality:
                 "primary": {
                     "host": "localhost",
                     "port": 5432,
-                    "credentials": {"username": "test_admin", "password": "test_secret"},
+                    "credentials": {
+                        "username": "test_admin",
+                        "password": "test_secret",
+                    },
                 }
             }
         }
