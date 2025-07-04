@@ -51,7 +51,7 @@ from .exceptions.errors import (
     ConfigValidationError,
 )
 
-__version__ = "0.1.0"
+__version__ = "0.1.1"
 __author__ = "AliasConf Development Team"
 __email__ = "support@aliasconf.dev"
 
