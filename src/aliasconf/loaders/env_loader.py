@@ -42,6 +42,10 @@ class EnvLoader:
 
             # キーをパスに分解
             path = self._parse_key(key)
+            
+            # 空のパスはスキップ
+            if not path:
+                continue
 
             # 値を適切な型に変換
             if self.type_conversion:
@@ -110,6 +114,9 @@ class EnvLoader:
         self, data: Dict[str, Any], path: List[str], value: Any
     ) -> None:
         """ネストした辞書に値を設定"""
+        if not path:
+            return
+            
         current: Any = data
 
         for i, key in enumerate(path[:-1]):

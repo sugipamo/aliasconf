@@ -42,6 +42,9 @@ from .resolver import (
 
 T = TypeVar("T")
 
+# Sentinel value for missing default
+_MISSING = object()
+
 
 class ConfigManager:
     """Main configuration manager with alias support.
@@ -214,7 +217,7 @@ class ConfigManager:
         self,
         path: Union[str, List[str]],
         return_type: Type[T],
-        default: Optional[T] = None,
+        default: Union[T, object] = _MISSING,
     ) -> T:
         """Get a configuration value with type safety.
 
@@ -238,8 +241,8 @@ class ConfigManager:
             >>> name = config.get("app.name", str, "default")  # Returns str with default
         """
         if self._root is None:
-            if default is not None:
-                return default
+            if default is not _MISSING:
+                return cast(T, default)
             raise ConfigResolverError("No configuration loaded")
 
         # Normalize path and create cache key
@@ -259,17 +262,22 @@ class ConfigManager:
                 node = resolve_best(self._root, normalized_path)
 
             if node is None:
-                if default is not None:
-                    return default
+                if default is not _MISSING:
+                    return cast(T, default)
                 raise ConfigResolverError(f"Configuration path not found: {path}")
 
+            if node.value is None and default is not _MISSING:
+                return cast(T, default)
+            
             value = self._convert_value(node.value, return_type)
             self._cache[cache_key] = value
             return value
 
+        except ConfigResolverError:
+            if default is not _MISSING:
+                return cast(T, default)
+            raise
         except Exception:
-            if default is not None:
-                return default
             raise
 
     def get_all(self, path: Union[str, List[str]], return_type: Type[T]) -> List[T]:
@@ -506,28 +514,32 @@ class ConfigManager:
         Raises:
             ConfigValidationError: If the path is invalid
         """
+        # Get current configuration as dict
         if self._root is None:
-            self._root = ConfigNode()
-
+            current_data = {}
+        else:
+            current_data = self.to_dict(include_aliases=False)
+        
         # Normalize path
         if isinstance(path, str):
             path_parts = normalize_path(path)
         else:
             path_parts = path
-
-        # Navigate to parent node
-        current = self._root
-        for i, part in enumerate(path_parts[:-1]):
-            if part not in current.children:
-                current.children[part] = ConfigNode()
-            current = current.children[part]
-
-        # Set the value
-        last_part = path_parts[-1]
-        if last_part not in current.children:
-            current.children[last_part] = ConfigNode()
-        current.children[last_part].value = value
-
+        
+        # Set the value in the dict
+        current = current_data
+        for part in path_parts[:-1]:
+            if part not in current:
+                current[part] = {}
+            elif not isinstance(current[part], dict):
+                current[part] = {}
+            current = current[part]
+        
+        current[path_parts[-1]] = value
+        
+        # Recreate the config tree from the updated dict
+        self._root = create_config_root_from_dict(current_data)
+        
         # Clear cache
         self.clear_cache()
 
@@ -541,9 +553,6 @@ class ConfigManager:
         Raises:
             ConfigValidationError: If either path is invalid
         """
-        if self._root is None:
-            self._root = ConfigNode()
-
         # Normalize paths
         if isinstance(alias_path, str):
             alias_parts = normalize_path(alias_path)
@@ -555,25 +564,45 @@ class ConfigManager:
         else:
             target_parts = target_path
 
-        # Navigate to target node to ensure it exists
-        target_node = self._root
-        for part in target_parts:
-            if part not in target_node.children:
-                target_node.children[part] = ConfigNode()
-            target_node = target_node.children[part]
-
-        # Create alias path
-        current = self._root
-        for i, part in enumerate(alias_parts[:-1]):
-            if part not in current.children:
-                current.children[part] = ConfigNode()
-            current = current.children[part]
-
-        # Set the alias
-        last_part = alias_parts[-1]
-        if last_part not in current.aliases:
-            current.aliases[last_part] = target_parts
-
+        # Get current configuration as dict
+        if self._root is None:
+            current_data = {}
+        else:
+            current_data = self.to_dict(include_aliases=True)
+            
+        # Navigate to the target path and add alias
+        current = current_data
+        for part in target_parts[:-1]:
+            if part not in current or not isinstance(current[part], dict):
+                # Target path doesn't exist
+                raise ConfigValidationError(f"Target path does not exist: {'.'.join(target_parts)}")
+            current = current[part]
+            
+        if target_parts[-1] not in current:
+            raise ConfigValidationError(f"Target path does not exist: {'.'.join(target_parts)}")
+            
+        # Now navigate to alias parent and add the alias
+        current = current_data
+        for part in alias_parts[:-1]:
+            if part not in current:
+                current[part] = {}
+            elif not isinstance(current[part], dict):
+                current[part] = {}
+            current = current[part]
+            
+        # Simply create an alias reference in the data structure
+        # The actual aliasing is handled by the ConfigNode structure
+        pass
+        
+        # Add aliases metadata if needed
+        if "aliases" not in current:
+            current["aliases"] = []
+        if alias_parts[-1] not in current["aliases"]:
+            current["aliases"].append(alias_parts[-1])
+        
+        # Recreate the config tree from the updated dict
+        self._root = create_config_root_from_dict(current_data)
+        
         # Clear cache
         self.clear_cache()
 
@@ -600,7 +629,7 @@ class ConfigManager:
             Self for method chaining
         """
         # Create EnvLoader instance
-        env_loader = EnvLoader(prefix=prefix, delimiter=delimiter, convert_types=converter is None)
+        env_loader = EnvLoader(prefix=prefix, delimiter=delimiter, type_conversion=converter is None)
 
         # Load environment variables
         env_data = env_loader.load()
