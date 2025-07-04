@@ -138,6 +138,8 @@ class TestAliasPerformance:
 
     def test_deep_alias_chain_performance(self):
         """Test performance with deeply chained alias lookups."""
+        import sys
+        
         config_dict = {
             "level_0": {
                 "aliases": ["l0"],
@@ -168,7 +170,14 @@ class TestAliasPerformance:
         access_time = time.time() - start_time
 
         assert value == "deep_value"
-        assert access_time < 0.01  # Should resolve quickly despite depth
+        
+        # Windows環境では時間測定の精度とオーバーヘッドを考慮
+        if sys.platform == "win32":
+            # Windows環境では20ms以内を許容
+            assert access_time < 0.02
+        else:
+            # その他の環境では10ms以内
+            assert access_time < 0.01
 
     def test_alias_vs_direct_access_performance(self):
         """Compare performance of alias access vs direct access."""
