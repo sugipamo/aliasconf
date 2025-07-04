@@ -511,7 +511,7 @@ class TestValidateConfigStructure:
             "database": {
                 "host": "localhost",
                 "port": 5432,
-                "credentials": {"username": "user", "password": "pass"},
+                "credentials": {"username": "test_user", "password": "test_pass"},
             },
             "cache": {"enabled": True, "ttl": 3600},
         }

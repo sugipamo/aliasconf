@@ -100,7 +100,7 @@ class TestBasicFunctionality:
                 "primary": {
                     "host": "localhost",
                     "port": 5432,
-                    "credentials": {"username": "admin", "password": "secret"},
+                    "credentials": {"username": "test_admin", "password": "test_secret"},
                 }
             }
         }
@@ -109,8 +109,8 @@ class TestBasicFunctionality:
 
         assert config.get("database.primary.host", str) == "localhost"
         assert config.get("database.primary.port", int) == 5432
-        assert config.get("database.primary.credentials.username", str) == "admin"
-        assert config.get("database.primary.credentials.password", str) == "secret"
+        assert config.get("database.primary.credentials.username", str) == "test_admin"
+        assert config.get("database.primary.credentials.password", str) == "test_secret"
 
     def test_has_method(self):
         """Test the has() method for checking path existence."""

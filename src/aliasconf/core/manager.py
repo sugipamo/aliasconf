@@ -504,6 +504,99 @@ class ConfigManager:
         self._config_cache.clear()
         clear_global_cache()
 
+    def _collect_alias_mappings(self) -> Dict[str, str]:
+        """Collect all alias mappings in the configuration tree.
+        
+        Returns:
+            Dictionary mapping alias paths to their target paths
+        """
+        if self._root is None:
+            return {}
+        
+        alias_map = {}
+        
+        def collect_from_node(node: ConfigNode, path: List[str], parent_path: List[str]) -> None:
+            # Add all aliases for this node
+            if node.aliases:
+                for alias in node.aliases:
+                    # Replace the last component with the alias
+                    if parent_path:
+                        # Build the alias path using parent path + alias
+                        alias_path_parts = parent_path + [alias]
+                        alias_path = ".".join(alias_path_parts)
+                        target_path = ".".join(path)
+                        alias_map[alias_path] = target_path
+                        
+                        # Also process child nodes with this alias path
+                        for child in node.next_nodes:
+                            child_alias_path = alias_path_parts + [child.key]
+                            child_target_path = path + [child.key]
+                            alias_map[".".join(child_alias_path)] = ".".join(child_target_path)
+                            collect_from_node(child, child_target_path, alias_path_parts)
+                    else:
+                        # Top-level alias
+                        alias_map[alias] = node.key
+                        
+                        # Also map all child paths
+                        for child in node.next_nodes:
+                            child_alias_path = [alias, child.key]
+                            child_target_path = [node.key, child.key]
+                            alias_map[".".join(child_alias_path)] = ".".join(child_target_path)
+                            collect_from_node(child, child_target_path, [alias])
+            
+            # Process child nodes with current path
+            for child in node.next_nodes:
+                collect_from_node(child, path + [child.key], path)
+        
+        # Start from root's children
+        for child in self._root.next_nodes:
+            collect_from_node(child, [child.key], [])
+        
+        return alias_map
+
+    def _flatten_dict(self, data: Dict[str, Any], prefix: str = "") -> Dict[str, Any]:
+        """Flatten a nested dictionary to dot-notation paths.
+        
+        Args:
+            data: Dictionary to flatten
+            prefix: Prefix for keys
+            
+        Returns:
+            Flattened dictionary with dot-notation keys
+        """
+        result = {}
+        
+        for key, value in data.items():
+            new_key = f"{prefix}.{key}" if prefix else key
+            
+            if isinstance(value, dict) and value:
+                # Recursively flatten nested dictionaries
+                result.update(self._flatten_dict(value, new_key))
+            else:
+                result[new_key] = value
+        
+        return result
+
+    def _set_nested_value_from_path(self, data: Dict[str, Any], path: str, value: Any) -> None:
+        """Set a value in a nested dictionary using a dot-notation path.
+        
+        Args:
+            data: Dictionary to modify
+            path: Dot-notation path
+            value: Value to set
+        """
+        parts = path.split(".")
+        current = data
+        
+        for part in parts[:-1]:
+            if part not in current:
+                current[part] = {}
+            elif not isinstance(current[part], dict):
+                current[part] = {}
+            current = current[part]
+        
+        current[parts[-1]] = value
+
     def set(self, path: Union[str, List[str]], value: Any) -> None:
         """Set a value at the specified path.
 
@@ -547,8 +640,8 @@ class ConfigManager:
         """Add an alias for a configuration path.
 
         Args:
-            alias_path: The alias path
-            target_path: The target path that the alias points to
+            alias_path: The alias path (e.g., "db.host")
+            target_path: The target path that the alias points to (e.g., "database.host")
 
         Raises:
             ConfigValidationError: If either path is invalid
@@ -564,41 +657,58 @@ class ConfigManager:
         else:
             target_parts = target_path
 
+        # Check that both paths have the same depth
+        if len(alias_parts) != len(target_parts):
+            raise ConfigValidationError(
+                f"Alias path depth ({len(alias_parts)}) must match target path depth ({len(target_parts)})"
+            )
+
         # Get current configuration as dict
         if self._root is None:
             current_data = {}
         else:
             current_data = self.to_dict(include_aliases=True)
             
-        # Navigate to the target path and add alias
+        # Check if target path exists
         current = current_data
-        for part in target_parts[:-1]:
-            if part not in current or not isinstance(current[part], dict):
-                # Target path doesn't exist
-                raise ConfigValidationError(f"Target path does not exist: {'.'.join(target_parts)}")
-            current = current[part]
-            
-        if target_parts[-1] not in current:
-            raise ConfigValidationError(f"Target path does not exist: {'.'.join(target_parts)}")
-            
-        # Now navigate to alias parent and add the alias
-        current = current_data
-        for part in alias_parts[:-1]:
+        for part in target_parts:
             if part not in current:
-                current[part] = {}
-            elif not isinstance(current[part], dict):
-                current[part] = {}
-            current = current[part]
-            
-        # Simply create an alias reference in the data structure
-        # The actual aliasing is handled by the ConfigNode structure
-        pass
+                raise ConfigValidationError(f"Target path does not exist: {'.'.join(target_parts)}")
+            if isinstance(current[part], dict):
+                current = current[part]
         
-        # Add aliases metadata if needed
-        if "aliases" not in current:
-            current["aliases"] = []
-        if alias_parts[-1] not in current["aliases"]:
-            current["aliases"].append(alias_parts[-1])
+        # Find the common parent and add alias at the appropriate level
+        # For example: db.host -> database.host means 'db' is an alias for 'database'
+        for i in range(len(target_parts)):
+            if i >= len(alias_parts) or alias_parts[i] != target_parts[i]:
+                # Found the divergence point
+                if i == 0:
+                    # Top-level alias (e.g., db -> database)
+                    current = current_data
+                else:
+                    # Navigate to the parent
+                    current = current_data
+                    for j in range(i):
+                        current = current[target_parts[j]]
+                
+                # Add alias to the target node
+                target_key = target_parts[i]
+                alias_key = alias_parts[i]
+                
+                if target_key in current:
+                    target_node = current[target_key]
+                    if isinstance(target_node, dict):
+                        if "aliases" not in target_node:
+                            target_node["aliases"] = []
+                        if alias_key not in target_node["aliases"]:
+                            target_node["aliases"].append(alias_key)
+                    else:
+                        # Convert to dict format with aliases
+                        current[target_key] = {
+                            "value": target_node,
+                            "aliases": [alias_key]
+                        }
+                break
         
         # Recreate the config tree from the updated dict
         self._root = create_config_root_from_dict(current_data)
@@ -647,6 +757,29 @@ class ConfigManager:
                 return result
             env_data = apply_converter(env_data)
 
+        # Handle alias resolution if requested
+        if use_aliases and self._root is not None:
+            # Collect alias mappings from current configuration
+            alias_map = self._collect_alias_mappings()
+            
+            # Flatten the environment data
+            flattened_env = self._flatten_dict(env_data)
+            
+            # Create a new dictionary with resolved aliases
+            resolved_data = {}
+            for key_path, value in flattened_env.items():
+                # Check if this path is an alias
+                if key_path in alias_map:
+                    # Use the actual target path
+                    actual_path = alias_map[key_path]
+                    self._set_nested_value_from_path(resolved_data, actual_path, value)
+                else:
+                    # Use the path as-is
+                    self._set_nested_value_from_path(resolved_data, key_path, value)
+            
+            # Replace env_data with resolved data
+            env_data = resolved_data
+
         # Merge with existing configuration
         if self._root is None:
             self._root = create_config_root_from_dict(env_data)
@@ -657,7 +790,7 @@ class ConfigManager:
                     self.set(key, value)
             else:
                 # Replace strategy: merge with existing
-                current_data = self.to_dict(include_aliases=False)
+                current_data = self.to_dict(include_aliases=True)
                 merged_data = deep_merge_dicts(current_data, env_data)
                 self._root = create_config_root_from_dict(merged_data)
 

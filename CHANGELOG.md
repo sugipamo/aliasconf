@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.2] - 2025-07-04
+
+### Fixed
+- Environment variable loading with alias resolution (`use_aliases=True` parameter)
+- Test suite security warnings for hardcoded test credentials
+- Improved test coverage to 85.37%
+
+### Changed
+- Enhanced `ConfigManager.load_from_env()` to properly resolve aliases when `use_aliases=True`
+- Added helper methods for alias mapping collection and dictionary flattening
+- Test credentials now use explicit `test_` prefix to indicate they are for testing only
+
 ## [0.1.1] - 2025-07-04
 
 ### Added
@@ -34,4 +46,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Extensive test coverage across all modules
 - GitHub Actions CI/CD with automated testing and deployment
 
+[0.1.2]: https://github.com/sugipamo/aliasconf/releases/tag/v0.1.2
 [0.1.1]: https://github.com/sugipamo/aliasconf/releases/tag/v0.1.1
