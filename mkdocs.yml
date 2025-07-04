@@ -1,10 +1,10 @@
 site_name: AliasConf Documentation
-site_url: https://github.com/yourusername/aliasconf
+site_url: https://sugipamo.github.io/aliasconf/
 site_description: Powerful configuration management with alias support
-site_author: Your Name
+site_author: sugipamo
 
-repo_name: yourusername/aliasconf
-repo_url: https://github.com/yourusername/aliasconf
+repo_name: sugipamo/aliasconf
+repo_url: https://github.com/sugipamo/aliasconf
 
 theme:
   name: material
@@ -120,7 +120,7 @@ markdown_extensions:
 extra:
   social:
     - icon: fontawesome/brands/github
-      link: https://github.com/yourusername/aliasconf
+      link: https://github.com/sugipamo/aliasconf
     - icon: fontawesome/brands/python
       link: https://pypi.org/project/aliasconf/
 
