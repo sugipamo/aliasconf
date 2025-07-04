@@ -181,6 +181,8 @@ class TestAliasPerformance:
 
     def test_alias_vs_direct_access_performance(self):
         """Compare performance of alias access vs direct access."""
+        import platform
+        
         config_dict = {
             "services": {
                 "database": {
@@ -192,17 +194,28 @@ class TestAliasPerformance:
 
         config = ConfigManager.from_dict(config_dict)
 
+        # Increase iterations for Windows to get measurable time
+        iterations = 10000 if platform.system() == "Windows" else 1000
+
         # Time direct access
-        start_time = time.time()
-        for _ in range(1000):
+        start_time = time.perf_counter()
+        for _ in range(iterations):
             config.get("services.database.config.host", str)
-        direct_time = time.time() - start_time
+        direct_time = time.perf_counter() - start_time
 
         # Time alias access
-        start_time = time.time()
-        for _ in range(1000):
+        start_time = time.perf_counter()
+        for _ in range(iterations):
             config.get("services.db.config.host", str)
-        alias_time = time.time() - start_time
+        alias_time = time.perf_counter() - start_time
+
+        # Handle Windows timer precision issues
+        if platform.system() == "Windows":
+            # Ensure minimum measurable time
+            if direct_time == 0.0:
+                direct_time = 0.001
+            if alias_time == 0.0:
+                alias_time = 0.001
 
         # Alias access should be comparable to direct access
         # Allow up to 2x overhead for alias resolution
