@@ -106,7 +106,9 @@ class EnvLoader:
         # 変換できない場合は文字列として返す
         return value
 
-    def _set_nested_value(self, data: Dict[str, Any], path: List[str], value: Any) -> None:
+    def _set_nested_value(
+        self, data: Dict[str, Any], path: List[str], value: Any
+    ) -> None:
         """ネストした辞書に値を設定"""
         current: Any = data
 
