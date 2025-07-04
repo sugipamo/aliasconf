@@ -1,63 +1,37 @@
 # Changelog
 
-All notable changes to AliasConf will be documented in this file.
+All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
-
 ## [0.1.1] - 2025-07-04
 
-### Fixed
-- Applied Black formatting to all Python files for consistent code style
-- Fixed code quality issues identified by ruff and mypy
-- Resolved all type annotation issues
-
 ### Added
-- Added types-pyyaml to dev dependencies for better type checking
-
-### Changed
-- Improved planning documentation organization
-- Updated ROADMAP with latest progress and achievements
-
-## [0.1.0] - 2024-07-03
-
-### Added
-- Core ConfigNode implementation with alias support
-- ConfigManager for high-level configuration management
-- Support for multiple aliases per configuration value
-- BFS-based configuration path resolution
-- Template string formatting with variable expansion
-- Type-safe configuration access with automatic conversion
-- Support for YAML and JSON configuration files
-- Configuration merging capabilities
-- Comprehensive error handling with custom exceptions
-- Caching for improved performance
-- Utility functions for path normalization and validation
-- Full test suite with pytest
-- Documentation and examples
-- MIT license
+- Initial release of AliasConf
+- Core configuration management functionality
+- Powerful alias system for configuration keys
+- Type-safe configuration access
+- Template expansion support
+- Performance optimizations with LRU cache
+- Comprehensive test suite (84.81% coverage)
+- Full CI/CD pipeline with multi-OS support
 
 ### Features
-- **Multiple Aliases**: Access same values through different names
-- **Tree Structure**: Hierarchical configuration with parent-child relationships
-- **Smart Resolution**: Efficient BFS-based path resolution algorithm
-- **Template Expansion**: Dynamic variable substitution with {key} syntax
-- **Type Safety**: Automatic type conversion with validation
-- **Multiple Formats**: YAML, JSON, and Python dictionary support
-- **Configuration Merging**: Combine multiple configuration sources
-- **Performance**: Optimized with caching and efficient algorithms
+- **Alias System**: Access configuration values through multiple names
+- **Nested Configuration**: Support for deeply nested configuration structures
+- **Type Safety**: Automatic type conversion and validation
+- **File Format Support**: YAML configuration file loading
+- **Configuration Merging**: Merge multiple configuration sources
+- **Template Variables**: Dynamic value expansion with `{path}` syntax
+- **Performance**: Optimized with caching for large configurations
+- **Developer Experience**: Full type hints and IDE autocompletion support
 
 ### Technical Details
-- Python 3.8+ support
-- Zero required dependencies for core functionality
-- Optional dependencies: PyYAML for YAML support
-- Comprehensive type hints throughout
-- 100% test coverage target
-- Modern Python packaging with pyproject.toml
-- Code quality tools: black, isort, mypy, ruff
+- Supports Python 3.9, 3.10, 3.11, and 3.12
+- Cross-platform compatibility (Windows, macOS, Linux)
+- Zero runtime dependencies (PyYAML only for YAML support)
+- Extensive test coverage across all modules
+- GitHub Actions CI/CD with automated testing and deployment
 
-[Unreleased]: https://github.com/sugipamo/aliasconf/compare/v0.1.1...HEAD
-[0.1.1]: https://github.com/sugipamo/aliasconf/compare/v0.1.0...v0.1.1
-[0.1.0]: https://github.com/sugipamo/aliasconf/releases/tag/v0.1.0
+[0.1.1]: https://github.com/sugipamo/aliasconf/releases/tag/v0.1.1
