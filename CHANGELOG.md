@@ -7,8 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.1] - 2025-07-04
+
+### Fixed
+- Applied Black formatting to all Python files for consistent code style
+- Fixed code quality issues identified by ruff and mypy
+- Resolved all type annotation issues
+
 ### Added
-- Initial development version
+- Added types-pyyaml to dev dependencies for better type checking
+
+### Changed
+- Improved planning documentation organization
+- Updated ROADMAP with latest progress and achievements
 
 ## [0.1.0] - 2024-07-03
 
