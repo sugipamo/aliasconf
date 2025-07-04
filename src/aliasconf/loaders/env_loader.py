@@ -42,7 +42,7 @@ class EnvLoader:
 
             # キーをパスに分解
             path = self._parse_key(key)
-            
+
             # 空のパスはスキップ
             if not path:
                 continue
@@ -116,7 +116,7 @@ class EnvLoader:
         """ネストした辞書に値を設定"""
         if not path:
             return
-            
+
         current: Any = data
 
         for i, key in enumerate(path[:-1]):
