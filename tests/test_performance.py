@@ -182,7 +182,7 @@ class TestAliasPerformance:
     def test_alias_vs_direct_access_performance(self):
         """Compare performance of alias access vs direct access."""
         import platform
-        
+
         config_dict = {
             "services": {
                 "database": {
