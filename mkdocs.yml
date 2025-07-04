@@ -36,28 +36,28 @@ theme:
 nav:
   - Home: index.md
   - Getting Started:
-    - Installation: getting-started/installation.md
+    # - Installation: getting-started/installation.md
     - Quick Start: getting-started/quickstart.md
-    - Basic Concepts: getting-started/concepts.md
-  - User Guide:
-    - Configuration Files: guide/configuration-files.md
-    - Alias System: guide/alias-system.md
-    - Template Expansion: guide/templates.md
-    - Type Safety: guide/type-safety.md
-    - Best Practices: guide/best-practices.md
+    # - Basic Concepts: getting-started/concepts.md
+  # - User Guide:
+  #   - Configuration Files: guide/configuration-files.md
+  #   - Alias System: guide/alias-system.md
+  #   - Template Expansion: guide/templates.md
+  #   - Type Safety: guide/type-safety.md
+  #   - Best Practices: guide/best-practices.md
   - API Reference:
     - ConfigManager: api/manager.md
-    - ConfigNode: api/node.md
-    - Exceptions: api/exceptions.md
-    - Utilities: api/utilities.md
-  - Examples:
-    - Basic Usage: examples/basic.md
-    - Advanced Patterns: examples/advanced.md
-    - Migration Guide: examples/migration.md
-  - Contributing:
-    - Development Setup: contributing/setup.md
-    - Testing: contributing/testing.md
-    - Code Style: contributing/style.md
+    # - ConfigNode: api/node.md
+    # - Exceptions: api/exceptions.md
+    # - Utilities: api/utilities.md
+  # - Examples:
+  #   - Basic Usage: examples/basic.md
+  #   - Advanced Patterns: examples/advanced.md
+  #   - Migration Guide: examples/migration.md
+  # - Contributing:
+  #   - Development Setup: contributing/setup.md
+  #   - Testing: contributing/testing.md
+  #   - Code Style: contributing/style.md
 
 plugins:
   - search:
