@@ -82,7 +82,7 @@ jobs:
     
     - name: Run performance tests
       run: |
-        pytest tests/test_performance.py -v --tb=short
+        pytest tests/test_performance.py -v --tb=short --no-cov
     
     - name: Generate performance report
       run: |
@@ -107,7 +107,7 @@ jobs:
     
     - name: Run integration tests
       run: |
-        pytest tests/test_integration.py -v --tb=short
+        pytest tests/test_integration.py -v --tb=short --no-cov
 
   edge-cases:
     runs-on: ubuntu-latest
@@ -128,7 +128,7 @@ jobs:
     
     - name: Run edge case tests
       run: |
-        pytest tests/test_edge_cases.py -v --tb=short
+        pytest tests/test_edge_cases.py -v --tb=short --no-cov
 
   docs:
     runs-on: ubuntu-latest
